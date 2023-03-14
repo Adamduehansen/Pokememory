@@ -14,8 +14,7 @@ const getIdHandler: GetIdHandler = function () {
 };
 
 function preloadScene(): void {
-  const maxId = parseInt(import.meta.env.VITE_MAX_ID);
-  const pokemonIds = getRandomPokemonIds(maxId, getIdHandler);
+  const pokemonIds = getRandomPokemonIds(4, getIdHandler);
   pokemonIds.forEach(loadSprite);
   kctx.go(scenes.game, pokemonIds);
 }
