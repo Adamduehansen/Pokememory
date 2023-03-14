@@ -1,8 +1,6 @@
-import kctx from './kctx';
+import kctx from '../lib/kctx';
 
 function gameScene(pokemonIds: number[]): void {
-  console.log(pokemonIds);
-
   pokemonIds.forEach((pokemonId, index) => {
     kctx.add([
       kctx.sprite(`${pokemonId}-front`),

@@ -1,10 +1,9 @@
-import kctx from './kctx';
-import scenes from './scenes';
-import gameScene from './gameScene';
-import preloadScene from './preloadScene';
+import kctx from './lib/kctx';
+import scenes from './lib/scenes';
+import gameScene from './scenes/gameScene';
+import preloadScene from './scenes/preloadScene';
 
-const assetRoot =
-  'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';
+const assetRoot = import.meta.env.VITE_ASSET_URL;
 
 kctx.loadRoot(assetRoot);
 
