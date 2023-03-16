@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 # local assets
-public/images
+public/images/*
+!public/images/card.png
