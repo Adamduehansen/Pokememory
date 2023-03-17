@@ -6,13 +6,20 @@ function createCard(options: { sprite: string; pos: Vec2 }) {
   const card = kctx.add([
     kctx.sprite('card', {
       width: 96,
+      frame: 0,
     }),
     kctx.area(),
     kctx.pos(pos),
     kctx.anchor('center'),
   ]);
-  card.onHover(() => kctx.setCursor('pointer'));
-  card.onHoverEnd(() => kctx.setCursor('auto'));
+  card.onHover(() => {
+    kctx.setCursor('pointer');
+    card.frame = 1;
+  });
+  card.onHoverEnd(() => {
+    kctx.setCursor('auto');
+    card.frame = 0;
+  });
 
   const pokemon = kctx.add([
     kctx.sprite(sprite, {
