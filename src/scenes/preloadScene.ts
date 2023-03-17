@@ -1,4 +1,4 @@
-import { GetIdHandler, getRandomPokemonIds } from '../lib/game';
+import { GetIdHandler, getRandomPokemonIds } from '../lib/utils';
 import kctx from '../lib/kctx';
 import scenes from '../lib/scenes';
 

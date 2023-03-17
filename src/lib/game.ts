@@ -1,23 +1,10 @@
-export type GetIdHandler = () => number;
-
-function makePokemonIdReducer(
-  getIdHandler: GetIdHandler
-): (listOfIds: number[]) => number[] {
-  return function (listOfIds: number[]) {
-    let randomId;
-    while (!randomId || listOfIds.includes(randomId)) {
-      randomId = getIdHandler();
-    }
-    return [...listOfIds, randomId];
-  };
+interface Game {
+  readonly firstSelectedId?: number;
+  select: (id: number) => void;
 }
 
-export function getRandomPokemonIds(
-  size: number,
-  getIdHandler: GetIdHandler
-): number[] {
-  return [...Array(size)].reduce<number[]>(
-    makePokemonIdReducer(getIdHandler),
-    []
-  );
+export function createGame(): Game {
+  return {
+    select: function () {},
+  };
 }
