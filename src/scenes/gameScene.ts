@@ -1,6 +1,6 @@
 import { Vec2 } from 'kaboom';
-import { selectable } from '../components/SelectableComp';
-import kctx from '../lib/kctx';
+import { selectable } from '@/components/SelectableComp';
+import kctx from '@/lib/kctx';
 
 function createCard(options: {
   id: number;

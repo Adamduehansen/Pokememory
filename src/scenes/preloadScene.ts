@@ -1,6 +1,6 @@
-import { GetIdHandler, getRandomPokemonIds } from '../lib/utils';
-import kctx from '../lib/kctx';
-import scenes from '../lib/scenes';
+import { GetIdHandler, getRandomPokemonIds } from '@/lib/utils';
+import kctx from '@/lib/kctx';
+import scenes from '@/lib/scenes';
 
 const { VITE_MAX_ID } = import.meta.env;
 
