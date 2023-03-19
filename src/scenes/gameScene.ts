@@ -1,23 +1,23 @@
-import { Vec2 } from 'kaboom';
-import { selectable } from '@/components/SelectableComp';
 import kctx from '@/lib/kctx';
+import { createGame, Pair } from '@/lib/game';
+import { GameObj, PosComp } from 'kaboom';
+
+type PokemonCardObj = GameObj<PosComp>;
 
 function createCard(options: {
   id: number;
   sprite: string;
-  pos: Vec2;
   onCardSelect: (id: number) => void;
 }) {
-  const { id, pos, sprite, onCardSelect } = options;
+  const { id, sprite, onCardSelect } = options;
   const card = kctx.add([
     kctx.sprite('card', {
       width: 96,
       frame: 0,
     }),
     kctx.area(),
-    kctx.pos(pos),
+    kctx.pos(),
     kctx.anchor('center'),
-    selectable(),
     'card',
   ]);
   card.onHover(() => {
@@ -29,46 +29,59 @@ function createCard(options: {
     card.frame = 0;
   });
 
-  const pokemon = kctx.add([
+  const pokemon = card.add([
     kctx.sprite(sprite, {
       width: 180,
     }),
-    kctx.pos(pos),
     kctx.anchor('center'),
   ]);
   pokemon.hidden = true;
 
   card.onClick(() => {
-    card.hidden = !card.hidden;
-    card.selected = !card.selected;
     pokemon.hidden = !pokemon.hidden;
-
-    if (!card.selected) {
-      return;
-    }
-
     onCardSelect(id);
   });
+
+  return card;
+}
+
+function mapPairToCards(
+  selectCardHandler: (id: number) => void
+): (pair: Pair) => PokemonCardObj[] {
+  return function ({ id }: Pair): PokemonCardObj[] {
+    const frontSpriteCard = createCard({
+      id: id,
+      sprite: `${id}-front`,
+      onCardSelect: selectCardHandler,
+    });
+
+    const backSpriteCard = createCard({
+      id: id,
+      sprite: `${id}-back`,
+      onCardSelect: selectCardHandler,
+    });
+
+    return [frontSpriteCard, backSpriteCard];
+  };
 }
 
 function gameScene(pokemonIds: number[]): void {
+  const game = createGame({
+    pokemonIds: pokemonIds,
+  });
+
   function handleCardSelect(id: number) {
-    console.log(id);
+    const result = game.select(id);
+    console.log(result);
   }
 
-  pokemonIds.forEach((pokemonId, index) => {
-    createCard({
-      id: pokemonId,
-      sprite: `${pokemonId}-front`,
-      pos: kctx.vec2(100 + index * 150, 100),
-      onCardSelect: handleCardSelect,
-    });
-    createCard({
-      id: pokemonId,
-      sprite: `${pokemonId}-back`,
-      pos: kctx.vec2(100 + index * 150, 300),
-      onCardSelect: handleCardSelect,
-    });
+  const cards: PokemonCardObj[] = game
+    .getPairs()
+    .map(mapPairToCards(handleCardSelect))
+    .flat();
+
+  cards.forEach((card, index) => {
+    card.moveTo(100 * index + 100, 100);
   });
 }
 
