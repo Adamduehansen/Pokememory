@@ -12,15 +12,29 @@ export interface Game {
   select: (id: number) => SelectResult;
 }
 
+function createPair(pokemonId: number): Pair {
+  return {
+    id: pokemonId,
+    matched: false,
+  };
+}
+
+function setMatchInPair(id: number): (pair: Pair) => Pair {
+  return function (pair): Pair {
+    if (pair.id !== id) {
+      return pair;
+    }
+    return {
+      ...pair,
+      matched: true,
+    };
+  };
+}
+
 export function createGame(options: { pokemonIds: number[] }): Game {
   const { pokemonIds } = options;
   let selectedId: number;
-  let pairs = pokemonIds.map((pokemonId): Pair => {
-    return {
-      id: pokemonId,
-      matched: false,
-    };
-  });
+  let pairs = pokemonIds.map(createPair);
   let gameState: GameState = 'idle';
   return {
     getState: () => gameState,
@@ -32,6 +46,7 @@ export function createGame(options: { pokemonIds: number[] }): Game {
         return 'await';
       } else if (selectedId === id) {
         gameState = 'idle';
+        pairs = pairs.map(setMatchInPair(id));
         return 'match';
       }
 

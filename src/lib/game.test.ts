@@ -84,6 +84,21 @@ describe('game', () => {
       // Assert
       expect(result).toEqual(expectedState);
     });
+
+    test('should set pair as matched on match', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [1, 2],
+      });
+
+      // Act
+      game.select(1);
+      game.select(1);
+      const matchedPair = game.getPairs().find((pair) => pair.id === 1);
+
+      // Assert
+      expect(matchedPair?.matched).toEqual(true);
+    });
   });
 
   describe('gameState', () => {
