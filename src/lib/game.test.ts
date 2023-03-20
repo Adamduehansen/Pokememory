@@ -49,10 +49,10 @@ describe('game', () => {
       });
 
       // Act
-      const result = game.select(1);
+      const actualState = game.select(1);
 
       // Assert
-      expect(result).toEqual(expectedState);
+      expect(actualState).toEqual(expectedState);
     });
 
     test('should return match result on second select', () => {
@@ -64,10 +64,10 @@ describe('game', () => {
 
       // Act
       game.select(1);
-      const result = game.select(1);
+      const actualState = game.select(1);
 
       // Assert
-      expect(result).toEqual(expectedState);
+      expect(actualState).toEqual(expectedState);
     });
 
     test('should return invalid result on second select', () => {
@@ -79,10 +79,10 @@ describe('game', () => {
 
       // Act
       game.select(1);
-      const result = game.select(2);
+      const actualState = game.select(2);
 
       // Assert
-      expect(result).toEqual(expectedState);
+      expect(actualState).toEqual(expectedState);
     });
 
     test('should set pair as matched on match', () => {
@@ -99,9 +99,54 @@ describe('game', () => {
       // Assert
       expect(matchedPair?.matched).toEqual(true);
     });
+
+    test('should return matched state when selected pair is matched', () => {
+      // Arrange
+      const expectedState: SelectResult = 'matched';
+      const game = createGame({
+        pokemonIds: [1, 2],
+      });
+
+      // Act
+      game.select(1);
+      game.select(1);
+      const actualState = game.select(1);
+
+      // Assert
+      expect(actualState).toEqual(expectedState);
+    });
   });
 
-  describe('gameState', () => {
+  describe('getSelectedId', () => {
+    test('should return selected id on first select', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [1, 2],
+      });
+
+      // Act
+      game.select(1);
+
+      // Assert
+      expect(game.getSelectedId()).toEqual(1);
+    });
+
+    test('should return undefined after a match', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [1, 2],
+      });
+
+      // Act
+      game.select(1);
+      game.select(1);
+
+      // Assert
+      expect(game.getSelectedId()).toBeUndefined();
+    });
+  });
+
+  describe('getState', () => {
     test('should await after first select', () => {
       // Arrange
       const expectedState: GameState = 'await';
@@ -135,6 +180,7 @@ describe('game', () => {
 
       // Assert
       expect(gameWithMatch.getState()).toEqual(expectedState);
+      expect(gameWithInvalid.getState()).toEqual(expectedState);
     });
   });
 });

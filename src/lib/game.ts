@@ -3,10 +3,11 @@ export interface Pair {
   matched: boolean;
 }
 
-export type SelectResult = 'await' | 'match' | 'invalid';
+export type SelectResult = 'await' | 'match' | 'invalid' | 'matched';
 export type GameState = 'idle' | 'await';
 
 export interface Game {
+  getSelectedId: () => number | undefined;
   getPairs: () => Pair[];
   getState: () => GameState;
   select: (id: number) => SelectResult;
@@ -33,13 +34,18 @@ function setMatchInPair(id: number): (pair: Pair) => Pair {
 
 export function createGame(options: { pokemonIds: number[] }): Game {
   const { pokemonIds } = options;
-  let selectedId: number;
+  let selectedId: number | undefined;
   let pairs = pokemonIds.map(createPair);
   let gameState: GameState = 'idle';
   return {
+    getSelectedId: () => selectedId,
     getState: () => gameState,
     getPairs: () => pairs,
     select: function (id: number) {
+      if (pairs.find((pair) => pair.id === id)?.matched) {
+        return 'matched';
+      }
+
       if (selectedId === undefined) {
         selectedId = id;
         gameState = 'await';
@@ -47,6 +53,7 @@ export function createGame(options: { pokemonIds: number[] }): Game {
       } else if (selectedId === id) {
         gameState = 'idle';
         pairs = pairs.map(setMatchInPair(id));
+        selectedId = undefined;
         return 'match';
       }
 
