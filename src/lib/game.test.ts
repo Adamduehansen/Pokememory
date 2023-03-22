@@ -1,186 +1,182 @@
 import { describe, test, expect } from 'vitest';
-import { createGame, GameState, SelectResult } from './game';
+import { createGame, GameState } from './game';
 
 describe('game', () => {
   describe('createGame', () => {
-    test('should create card pairs', () => {
+    test('should create card objects', () => {
       // Arrange
-      const expectedMatches = [
-        {
-          id: 1,
-          matched: false,
-        },
-        {
-          id: 2,
-          matched: false,
-        },
-      ];
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
-      const matches = game.getPairs();
+      const cards = game.getCards();
 
       // Assert
-      expect(matches).toEqual(expectedMatches);
+      expect(cards).toHaveLength(4);
+      expect(cards[0].pokemonId).toEqual(13);
+      expect(cards[0].id).toEqual(0);
+      expect(cards[1].pokemonId).toEqual(13);
+      expect(cards[1].id).toEqual(1);
+      expect(cards[2].pokemonId).toEqual(142);
+      expect(cards[2].id).toEqual(2);
+      expect(cards[3].pokemonId).toEqual(142);
+      expect(cards[3].id).toEqual(3);
+      expect(cards.every((card) => card.matched === false)).toEqual(true);
     });
 
-    test('should set game state to idle', () => {
+    test('should set selected cards to undefined', () => {
       // Arrange
-      const expectedState: GameState = 'idle';
-
-      // Act
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
+      // Act
+      const { first, second } = game.getSelectedCards();
+
       // Assert
-      expect(game.getState()).toEqual(expectedState);
+      expect(first).toBeUndefined();
+      expect(second).toBeUndefined();
+    });
+
+    test('should set gameState idle', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [13, 142],
+      });
+
+      // Act
+      const state = game.getState();
+
+      // Assert
+      expect(state).toEqual<GameState>('idle');
     });
   });
 
   describe('select', () => {
-    test('should return awaiting result on first select', () => {
+    test('should store selected cards', () => {
       // Arrange
-      const expectedState: SelectResult = 'await';
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
-      const actualState = game.select(1);
+      game.select(1);
+      game.select(2);
 
       // Assert
-      expect(actualState).toEqual(expectedState);
+      expect(game.getSelectedCards().first).toEqual(1);
+      expect(game.getSelectedCards().second).toEqual(2);
     });
 
-    test('should return match result on second select', () => {
+    test('should set cards matched to true on match', () => {
       // Arrange
-      const expectedState: SelectResult = 'match';
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
+      game.select(0);
       game.select(1);
-      const actualState = game.select(1);
+
+      const [firstMatchedCard, secondMatchedCard] = game
+        .getCards()
+        .filter((card) => card.matched);
 
       // Assert
-      expect(actualState).toEqual(expectedState);
+      expect(firstMatchedCard.id).toEqual(0);
+      expect(secondMatchedCard.id).toEqual(1);
     });
 
-    test('should return invalid result on second select', () => {
+    test('should not select if card is equal first card', () => {
       // Arrange
-      const expectedState: SelectResult = 'invalid';
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
-      game.select(1);
-      const actualState = game.select(2);
+      game.select(0);
+      game.select(0);
 
       // Assert
-      expect(actualState).toEqual(expectedState);
+      expect(game.getSelectedCards().second).toBeUndefined();
     });
 
-    test('should set pair as matched on match', () => {
+    test('should not update second card if already chosen', () => {
       // Arrange
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
+      game.select(0);
       game.select(1);
-      game.select(1);
-      const matchedPair = game.getPairs().find((pair) => pair.id === 1);
+      game.select(2);
 
       // Assert
-      expect(matchedPair?.matched).toEqual(true);
-    });
-
-    test('should return matched state when selected pair is matched', () => {
-      // Arrange
-      const expectedState: SelectResult = 'matched';
-      const game = createGame({
-        pokemonIds: [1, 2],
-      });
-
-      // Act
-      game.select(1);
-      game.select(1);
-      const actualState = game.select(1);
-
-      // Assert
-      expect(actualState).toEqual(expectedState);
+      expect(game.getSelectedCards().second).toEqual(1);
     });
   });
 
-  describe('getSelectedId', () => {
-    test('should return selected id on first select', () => {
+  describe('reset', () => {
+    test('should reset selected cards', () => {
       // Arrange
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
+      game.select(0);
       game.select(1);
+      game.reset();
 
       // Assert
-      expect(game.getSelectedId()).toEqual(1);
+      expect(game.getSelectedCards().first).toBeUndefined();
+      expect(game.getSelectedCards().second).toBeUndefined();
     });
 
-    test('should return undefined after a match', () => {
+    test('should not reset when only first card is selected', () => {
       // Arrange
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
       });
 
       // Act
-      game.select(1);
-      game.select(1);
+      game.select(0);
+      game.reset();
 
       // Assert
-      expect(game.getSelectedId()).toBeUndefined();
+      expect(game.getSelectedCards().first).toEqual(0);
+      expect(game.getSelectedCards().second).toBeUndefined();
     });
   });
 
   describe('getState', () => {
-    test('should await after first select', () => {
+    test('should require reset when both first and second are chosen', () => {
       // Arrange
-      const expectedState: GameState = 'await';
       const game = createGame({
-        pokemonIds: [1, 2],
+        pokemonIds: [13, 142],
+      });
+
+      // Act
+      game.select(1);
+      game.select(3);
+
+      // Assert
+      expect(game.getState()).toEqual<GameState>('reset');
+    });
+
+    test('should be await state on first select', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [13, 142],
       });
 
       // Act
       game.select(1);
 
       // Assert
-      expect(game.getState()).toEqual(expectedState);
-    });
-
-    test('should be idle after second select', () => {
-      // Arrange
-      const expectedState: GameState = 'idle';
-      const gameWithMatch = createGame({
-        pokemonIds: [1, 2],
-      });
-      const gameWithInvalid = createGame({
-        pokemonIds: [1, 2],
-      });
-
-      // Act
-      gameWithMatch.select(1);
-      gameWithMatch.select(1);
-
-      gameWithInvalid.select(1);
-      gameWithInvalid.select(2);
-
-      // Assert
-      expect(gameWithMatch.getState()).toEqual(expectedState);
-      expect(gameWithInvalid.getState()).toEqual(expectedState);
+      expect(game.getState()).toEqual<GameState>('await');
     });
   });
 });

@@ -3,62 +3,107 @@ export interface Pair {
   matched: boolean;
 }
 
-export type SelectResult = 'await' | 'match' | 'invalid' | 'matched';
-export type GameState = 'idle' | 'await';
+export interface Card {
+  id: number;
+  pokemonId: number;
+  matched: boolean;
+}
+
+export type GameState = 'idle' | 'await' | 'reset';
+
+interface SelectedCards {
+  first?: number;
+  second?: number;
+}
 
 export interface Game {
-  getSelectedId: () => number | undefined;
-  getPairs: () => Pair[];
+  getCards: () => Card[];
+  getSelectedCards: () => SelectedCards;
   getState: () => GameState;
-  select: (id: number) => SelectResult;
+  select: (id: number) => void;
+  reset: () => void;
 }
 
-function createPair(pokemonId: number): Pair {
-  return {
-    id: pokemonId,
-    matched: false,
-  };
-}
+function reduceIdsToCard(listOfCards: Card[], pokemonId: number): Card[] {
+  const currentMaxId =
+    listOfCards.length === 0
+      ? 0
+      : Math.max(...listOfCards.map((card) => card.id + 1));
 
-function setMatchInPair(id: number): (pair: Pair) => Pair {
-  return function (pair): Pair {
-    if (pair.id !== id) {
-      return pair;
-    }
-    return {
-      ...pair,
-      matched: true,
-    };
-  };
+  return [
+    ...listOfCards,
+    {
+      id: currentMaxId,
+      pokemonId: pokemonId,
+      matched: false,
+    },
+    {
+      id: currentMaxId + 1,
+      pokemonId: pokemonId,
+      matched: false,
+    },
+  ];
 }
 
 export function createGame(options: { pokemonIds: number[] }): Game {
   const { pokemonIds } = options;
-  let selectedId: number | undefined;
-  let pairs = pokemonIds.map(createPair);
+  let cards = pokemonIds.reduce(reduceIdsToCard, []);
+
+  const selectedCards: SelectedCards = {
+    first: undefined,
+    second: undefined,
+  };
+
   let gameState: GameState = 'idle';
+
   return {
-    getSelectedId: () => selectedId,
+    getCards: () => cards,
+    getSelectedCards: () => selectedCards,
     getState: () => gameState,
-    getPairs: () => pairs,
     select: function (id: number) {
-      if (pairs.find((pair) => pair.id === id)?.matched) {
-        return 'matched';
+      if (gameState === 'reset') {
+        return;
       }
 
-      if (selectedId === undefined) {
-        selectedId = id;
+      if (selectedCards.first === undefined || selectedCards.first === id) {
         gameState = 'await';
-        return 'await';
-      } else if (selectedId === id) {
-        gameState = 'idle';
-        pairs = pairs.map(setMatchInPair(id));
-        selectedId = undefined;
-        return 'match';
+        selectedCards.first = id;
+        return;
+      } else {
+        selectedCards.second = id;
+        gameState = 'reset';
       }
 
-      gameState = 'idle';
-      return 'invalid';
+      const firstCard = cards.find((card) => card.id === selectedCards.first);
+      const secondCard = cards.find((card) => card.id === selectedCards.second);
+
+      if (firstCard === undefined || secondCard === undefined) {
+        throw new Error('Could not find cards based on ids');
+      }
+
+      if (firstCard.pokemonId === secondCard.pokemonId) {
+        cards = cards.map((card): Card => {
+          if (card.id !== firstCard.id && card.id !== secondCard.id) {
+            return card;
+          }
+
+          return {
+            ...card,
+            matched: true,
+          };
+        });
+      }
+    },
+    reset: function () {
+      if (
+        selectedCards.first !== undefined &&
+        selectedCards.second === undefined
+      ) {
+        return;
+      }
+
+      selectedCards.first = undefined;
+      selectedCards.second = undefined;
     },
   };
 }
