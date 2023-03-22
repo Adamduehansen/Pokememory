@@ -1,14 +1,18 @@
 import kctx from '@/lib/kctx';
-import { createGame, Pair } from '@/lib/game';
+import { Card, createGame } from '@/lib/game';
 import { GameObj, PosComp } from 'kaboom';
 
 type PokemonCardObj = GameObj<PosComp>;
+
+interface PokemonCardPairs {
+  [key: string]: Card[];
+}
 
 function createCard(options: {
   id: number;
   sprite: string;
   onCardSelect: (id: number) => void;
-}) {
+}): PokemonCardObj {
   const { id, sprite, onCardSelect } = options;
   const card = kctx.add([
     kctx.sprite('card', {
@@ -38,30 +42,34 @@ function createCard(options: {
   pokemon.hidden = true;
 
   card.onClick(() => {
-    pokemon.hidden = !pokemon.hidden;
     onCardSelect(id);
   });
 
   return card;
 }
 
-function mapPairToCards(
-  selectCardHandler: (id: number) => void
-): (pair: Pair) => PokemonCardObj[] {
-  return function ({ id }: Pair): PokemonCardObj[] {
-    const frontSpriteCard = createCard({
-      id: id,
-      sprite: `${id}-front`,
-      onCardSelect: selectCardHandler,
-    });
+function groupIntoPairs(group: PokemonCardPairs, card: Card): PokemonCardPairs {
+  const { pokemonId } = card;
+  group[pokemonId] = group[pokemonId] ?? [];
+  group[pokemonId].push(card);
+  return group;
+}
 
-    const backSpriteCard = createCard({
-      id: id,
-      sprite: `${id}-back`,
-      onCardSelect: selectCardHandler,
+function createCards(
+  handleCardSelect: (id: number) => void
+): (cards: Card[]) => PokemonCardObj[] {
+  return ([firstCard, secondCard]): PokemonCardObj[] => {
+    const frontCard = createCard({
+      id: firstCard.id,
+      sprite: `${firstCard.pokemonId}-front`,
+      onCardSelect: handleCardSelect,
     });
-
-    return [frontSpriteCard, backSpriteCard];
+    const backCard = createCard({
+      id: secondCard.id,
+      sprite: `${secondCard.pokemonId}-back`,
+      onCardSelect: handleCardSelect,
+    });
+    return [frontCard, backCard];
   };
 }
 
@@ -71,13 +79,13 @@ function gameScene(pokemonIds: number[]): void {
   });
 
   function handleCardSelect(id: number) {
-    const result = game.select(id);
-    console.log(result);
+    game.select(id);
   }
 
-  const cards: PokemonCardObj[] = game
-    .getPairs()
-    .map(mapPairToCards(handleCardSelect))
+  const cards = Object.values(
+    game.getCards().reduce<PokemonCardPairs>(groupIntoPairs, {})
+  )
+    .map(createCards(handleCardSelect))
     .flat();
 
   cards.forEach((card, index) => {
