@@ -1,12 +1,10 @@
-export interface Pair {
-  id: number;
-  matched: boolean;
-}
+export type CardFace = 'upside' | 'downside';
 
 export interface Card {
   id: number;
   pokemonId: number;
   matched: boolean;
+  face: CardFace;
 }
 
 export type GameState = 'idle' | 'await' | 'reset';
@@ -36,11 +34,13 @@ function reduceIdsToCard(listOfCards: Card[], pokemonId: number): Card[] {
       id: currentMaxId,
       pokemonId: pokemonId,
       matched: false,
+      face: 'downside',
     },
     {
       id: currentMaxId + 1,
       pokemonId: pokemonId,
       matched: false,
+      face: 'downside',
     },
   ];
 }
@@ -60,7 +60,13 @@ export function createGame(options: { pokemonIds: number[] }): Game {
     getCards: () => cards,
     getSelectedCards: () => selectedCards,
     getState: () => gameState,
-    select: function (id: number) {
+    select: function (id: number): void {
+      const selectedCard = cards.find((card) => card.id === id);
+
+      if (selectedCard === undefined) {
+        throw new Error('Could not find card');
+      }
+
       if (gameState === 'reset') {
         return;
       }
@@ -68,18 +74,18 @@ export function createGame(options: { pokemonIds: number[] }): Game {
       if (selectedCards.first === undefined || selectedCards.first === id) {
         gameState = 'await';
         selectedCards.first = id;
+        selectedCard.face = 'upside';
         return;
       } else {
         selectedCards.second = id;
+        selectedCard.face = 'upside';
         gameState = 'reset';
       }
 
-      const firstCard = cards.find((card) => card.id === selectedCards.first);
-      const secondCard = cards.find((card) => card.id === selectedCards.second);
-
-      if (firstCard === undefined || secondCard === undefined) {
-        throw new Error('Could not find cards based on ids');
-      }
+      const firstCard = cards.find((card) => card.id === selectedCards.first)!;
+      const secondCard = cards.find(
+        (card) => card.id === selectedCards.second
+      )!;
 
       if (firstCard.pokemonId === secondCard.pokemonId) {
         cards = cards.map((card): Card => {
@@ -93,6 +99,8 @@ export function createGame(options: { pokemonIds: number[] }): Game {
           };
         });
       }
+
+      return;
     },
     reset: function () {
       if (
@@ -104,6 +112,14 @@ export function createGame(options: { pokemonIds: number[] }): Game {
 
       selectedCards.first = undefined;
       selectedCards.second = undefined;
+      gameState = 'idle';
+
+      cards = cards.map((card): Card => {
+        return {
+          ...card,
+          face: card.matched ? 'upside' : 'downside',
+        };
+      });
     },
   };
 }

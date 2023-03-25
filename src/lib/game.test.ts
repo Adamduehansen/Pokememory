@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { createGame, GameState } from './game';
+import { CardFace, createGame, GameState } from './game';
 
 describe('game', () => {
   describe('createGame', () => {
@@ -23,6 +23,7 @@ describe('game', () => {
       expect(cards[3].pokemonId).toEqual(142);
       expect(cards[3].id).toEqual(3);
       expect(cards.every((card) => card.matched === false)).toEqual(true);
+      expect(cards.every((card) => card.face === 'downside')).toEqual(true);
     });
 
     test('should set selected cards to undefined', () => {
@@ -116,6 +117,23 @@ describe('game', () => {
       // Assert
       expect(game.getSelectedCards().second).toEqual(1);
     });
+
+    test('should set card face to upside when selected', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [13, 142],
+      });
+
+      // Act
+      game.select(0);
+      game.select(1);
+      const firstSelectedCard = game.getCards().find((card) => card.id === 0)!;
+      const secondSelectedCard = game.getCards().find((card) => card.id === 1)!;
+
+      // Assert
+      expect(firstSelectedCard.face).toEqual<CardFace>('upside');
+      expect(secondSelectedCard.face).toEqual<CardFace>('upside');
+    });
   });
 
   describe('reset', () => {
@@ -148,6 +166,53 @@ describe('game', () => {
       // Assert
       expect(game.getSelectedCards().first).toEqual(0);
       expect(game.getSelectedCards().second).toBeUndefined();
+    });
+
+    test('should set game state to idle', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [13, 142],
+      });
+
+      // Act
+      game.select(0);
+      game.select(1);
+      game.reset();
+
+      // Assert
+      expect(game.getState()).toEqual<GameState>('idle');
+    });
+
+    test('should set all but matching cards facedown', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [13, 142, 12],
+      });
+
+      // Act
+      game.select(0);
+      game.select(1);
+      game.reset();
+      game.select(2);
+      game.select(4);
+      game.reset();
+
+      const upsideCardsIds = game
+        .getCards()
+        .filter((card) => card.face === 'upside')
+        .map((card) => card.id);
+      const downsideCards = game
+        .getCards()
+        .filter((card) => card.face === 'downside')
+        .map((card) => card.id);
+
+      // Assert
+      expect(upsideCardsIds).toContain(0);
+      expect(upsideCardsIds).toContain(1);
+      expect(downsideCards).toContain(2);
+      expect(downsideCards).toContain(3);
+      expect(downsideCards).toContain(4);
+      expect(downsideCards).toContain(5);
     });
   });
 
