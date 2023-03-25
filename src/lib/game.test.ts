@@ -216,6 +216,22 @@ describe('game', () => {
     });
   });
 
+  describe('getCard', () => {
+    test('should return specific id when given argument', () => {
+      // Arrange
+      const game = createGame({
+        pokemonIds: [13, 142],
+      });
+
+      // Act
+      const card = game.getCard(0);
+
+      // Assert
+      expect(card).not.toBeUndefined();
+      expect(card!.id).toEqual(0);
+    });
+  });
+
   describe('getState', () => {
     test('should require reset when both first and second are chosen', () => {
       // Arrange

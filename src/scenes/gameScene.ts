@@ -45,14 +45,14 @@ function gameScene(pokemonIds: number[]): void {
     ]);
     cardObj.onHover(() => {
       kctx.setCursor('pointer');
-      if (game.getCards().find((card) => card.id === id)?.matched) {
+      if (game.getCard(id)?.matched) {
         return;
       }
       cardObj.frame = 1;
     });
     cardObj.onHoverEnd(() => {
       kctx.setCursor('auto');
-      if (game.getCards().find((card) => card.id === id)?.matched) {
+      if (game.getCard(id)?.matched) {
         return;
       }
       cardObj.frame = 0;

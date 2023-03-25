@@ -16,6 +16,7 @@ interface SelectedCards {
 
 export interface Game {
   getCards: () => Card[];
+  getCard: (id: number) => Card | undefined;
   getSelectedCards: () => SelectedCards;
   getState: () => GameState;
   select: (id: number) => void;
@@ -60,6 +61,9 @@ export function createGame(options: { pokemonIds: number[] }): Game {
     getCards: () => cards,
     getSelectedCards: () => selectedCards,
     getState: () => gameState,
+    getCard: function (id: number) {
+      return cards.find((card) => card.id === id);
+    },
     select: function (id: number): void {
       const selectedCard = cards.find((card) => card.id === id);
 
