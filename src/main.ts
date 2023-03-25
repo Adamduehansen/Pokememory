@@ -6,7 +6,7 @@ import preloadScene from './scenes/preloadScene';
 const assetRoot = import.meta.env.VITE_ASSET_URL;
 
 kctx.loadSprite('card', '/images/card.png', {
-  sliceX: 2,
+  sliceX: 4,
   sliceY: 1,
 });
 

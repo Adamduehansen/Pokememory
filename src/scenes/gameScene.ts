@@ -1,58 +1,15 @@
 import kctx from '@/lib/kctx';
 import { Card, createGame } from '@/lib/game';
-import { GameObj, PosComp } from 'kaboom';
+import { GameObj, PosComp, SpriteComp } from 'kaboom';
 
 interface CardComp {
   cardId: number;
 }
 
-type PokemonCardObj = GameObj<PosComp | CardComp>;
+type PokemonCardObj = GameObj<PosComp | SpriteComp | CardComp>;
 
 interface PokemonCardPairs {
   [key: string]: Card[];
-}
-
-function createCard(options: {
-  id: number;
-  sprite: string;
-  onCardSelect: (id: number) => void;
-}) {
-  const { id, sprite, onCardSelect } = options;
-  const cardObj = kctx.add([
-    kctx.sprite('card', {
-      width: 96,
-      frame: 0,
-    }),
-    kctx.area(),
-    kctx.pos(),
-    kctx.anchor('center'),
-    {
-      cardId: id,
-    },
-    'card',
-  ]);
-  cardObj.onHover(() => {
-    kctx.setCursor('pointer');
-    cardObj.frame = 1;
-  });
-  cardObj.onHoverEnd(() => {
-    kctx.setCursor('auto');
-    cardObj.frame = 0;
-  });
-
-  const pokemonObj = cardObj.add([
-    kctx.sprite(sprite, {
-      width: 180,
-    }),
-    kctx.anchor('center'),
-  ]);
-  pokemonObj.hidden = true;
-
-  cardObj.onClick(() => {
-    onCardSelect(id);
-  });
-
-  return cardObj;
 }
 
 function groupIntoPairs(group: PokemonCardPairs, card: Card): PokemonCardPairs {
@@ -62,28 +19,77 @@ function groupIntoPairs(group: PokemonCardPairs, card: Card): PokemonCardPairs {
   return group;
 }
 
-function createCards(
-  handleCardSelect: (id: number) => void
-): (cards: Card[]) => PokemonCardObj[] {
-  return ([firstCard, secondCard]): PokemonCardObj[] => {
-    const frontCard = createCard({
-      id: firstCard.id,
-      sprite: `${firstCard.pokemonId}-front`,
-      onCardSelect: handleCardSelect,
-    });
-    const backCard = createCard({
-      id: secondCard.id,
-      sprite: `${secondCard.pokemonId}-back`,
-      onCardSelect: handleCardSelect,
-    });
-    return [frontCard, backCard];
-  };
-}
-
 function gameScene(pokemonIds: number[]): void {
   const game = createGame({
     pokemonIds: pokemonIds,
   });
+
+  function createCard(options: {
+    id: number;
+    sprite: string;
+    onCardSelect: (id: number) => void;
+  }) {
+    const { id, sprite, onCardSelect } = options;
+    const cardObj = kctx.add([
+      kctx.sprite('card', {
+        width: 96,
+        frame: 0,
+      }),
+      kctx.area(),
+      kctx.pos(),
+      kctx.anchor('center'),
+      {
+        cardId: id,
+      },
+      'card',
+    ]);
+    cardObj.onHover(() => {
+      kctx.setCursor('pointer');
+      if (game.getCards().find((card) => card.id === id)?.matched) {
+        return;
+      }
+      cardObj.frame = 1;
+    });
+    cardObj.onHoverEnd(() => {
+      kctx.setCursor('auto');
+      if (game.getCards().find((card) => card.id === id)?.matched) {
+        return;
+      }
+      cardObj.frame = 0;
+    });
+
+    const pokemonObj = cardObj.add([
+      kctx.sprite(sprite, {
+        width: 180,
+      }),
+      kctx.anchor('center'),
+    ]);
+    pokemonObj.hidden = true;
+
+    cardObj.onClick(() => {
+      onCardSelect(id);
+    });
+
+    return cardObj;
+  }
+
+  function createCards(
+    handleCardSelect: (id: number) => void
+  ): (cards: Card[]) => PokemonCardObj[] {
+    return ([firstCard, secondCard]): PokemonCardObj[] => {
+      const frontCard = createCard({
+        id: firstCard.id,
+        sprite: `${firstCard.pokemonId}-front`,
+        onCardSelect: handleCardSelect,
+      });
+      const backCard = createCard({
+        id: secondCard.id,
+        sprite: `${secondCard.pokemonId}-back`,
+        onCardSelect: handleCardSelect,
+      });
+      return [frontCard, backCard];
+    };
+  }
 
   let pokemonGameObjects: PokemonCardObj[] = [];
 
@@ -102,6 +108,7 @@ function gameScene(pokemonIds: number[]): void {
 
       if (card.matched) {
         pokemonSprite.hidden = false;
+        pokemonGameObject.frame = 2;
       }
 
       const { first, second } = game.getSelectedCards();
