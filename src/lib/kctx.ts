@@ -1,5 +1,7 @@
 import kaboom from 'kaboom';
 
-const kctx = kaboom();
+const kctx = kaboom({
+  global: false,
+});
 
 export default kctx;
