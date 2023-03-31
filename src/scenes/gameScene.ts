@@ -1,4 +1,5 @@
 import { createCard, PokemonCardObj } from '@/gameobjects/Card';
+import shuffle from 'lodash/shuffle';
 import kctx from '@/lib/kctx';
 
 async function onCardSelectHandler(selectedCardId: number): Promise<void> {
@@ -60,7 +61,9 @@ function gameScene(pokemonIds: number[]): void {
     })
     .flat();
 
-  cards.forEach((card, index) => {
+  const shuffledCards = shuffle(cards);
+
+  shuffledCards.forEach((card, index) => {
     card.pos = kctx.vec2(100 + index * 100, 100);
   });
 }
