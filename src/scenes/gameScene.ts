@@ -43,6 +43,44 @@ async function onCardSelectHandler(selectedCardId: number): Promise<void> {
   }
 }
 
+const CELL_WIDTH = 150;
+const CELL_HEIGHT = 200;
+
+function positionCardsInGrid(
+  cards: PokemonCardObj[],
+  options: {
+    columns: number;
+    rows: number;
+  }
+) {
+  const { columns, rows } = options;
+
+  // Magic number somehow matches the size of the card sprite and gives an
+  // extra padding to the start x position. This way all cards are centered
+  // on the screen.
+  const magicWidthNumber = 74;
+  const startX =
+    kctx.width() / 2 - (columns * CELL_WIDTH) / 2 + magicWidthNumber;
+  const startY = kctx.height() / 2 - (rows * CELL_HEIGHT) / 2;
+
+  let columnIndex = 0;
+  let rowIndex = 0;
+
+  for (const card of cards) {
+    const position = kctx.vec2(
+      startX + columnIndex * CELL_WIDTH,
+      startY + rowIndex * CELL_HEIGHT
+    );
+    card.pos = position;
+
+    columnIndex++;
+    if (columnIndex >= columns) {
+      columnIndex = 0;
+      rowIndex++;
+    }
+  }
+}
+
 function gameScene(pokemonIds: number[]): void {
   const cards: PokemonCardObj[] = pokemonIds
     .map((pokemonId): PokemonCardObj[] => {
@@ -63,8 +101,9 @@ function gameScene(pokemonIds: number[]): void {
 
   const shuffledCards = shuffle(cards);
 
-  shuffledCards.forEach((card, index) => {
-    card.pos = kctx.vec2(100 + index * 100, 100);
+  positionCardsInGrid(shuffledCards, {
+    rows: 3,
+    columns: 4,
   });
 }
 

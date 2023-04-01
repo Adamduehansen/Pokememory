@@ -13,10 +13,10 @@ function makePokemonIdReducer(
 }
 
 export function getRandomPokemonIds(
-  size: number,
+  numberOfCards: number,
   getIdHandler: GetIdHandler
 ): number[] {
-  return [...Array(size)].reduce<number[]>(
+  return [...Array(numberOfCards)].reduce<number[]>(
     makePokemonIdReducer(getIdHandler),
     []
   );
