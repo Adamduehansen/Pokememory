@@ -14,7 +14,15 @@ const getIdHandler: GetIdHandler = function () {
 };
 
 function preloadScene(): void {
-  const pokemonIds = getRandomPokemonIds(4, getIdHandler);
+  const numberOfPokemons = 6;
+  if (numberOfPokemons > parseInt(VITE_MAX_ID)) {
+    throw new Error(
+      `numberOfPokemons: ${numberOfPokemons} cannot be larger than MAX_ID: ${VITE_MAX_ID}`
+    );
+  }
+
+  const pokemonIds = getRandomPokemonIds(numberOfPokemons, getIdHandler);
+
   pokemonIds.forEach(loadSprite);
   kctx.go(scenes.game, pokemonIds);
 }
