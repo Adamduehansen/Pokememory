@@ -10,6 +10,10 @@ async function onCardSelectHandler(selectedCardId: number): Promise<void> {
     return;
   }
 
+  if (selectedCard.isUpside()) {
+    return;
+  }
+
   selectedCard.turn();
 
   const turnedCards = allCards.filter(
@@ -55,13 +59,15 @@ function positionCardsInGrid(
 ) {
   const { columns, rows } = options;
 
-  // Magic number somehow matches the size of the card sprite and gives an
-  // extra padding to the start x position. This way all cards are centered
-  // on the screen.
+  // Magic numbers somehow matches the size of the card sprite and gives an
+  // extra padding to the start x and y position. This way all cards are
+  // centered on the screen.
   const magicWidthNumber = 74;
+  const magicHeightNumber = 98;
   const startX =
     kctx.width() / 2 - (columns * CELL_WIDTH) / 2 + magicWidthNumber;
-  const startY = kctx.height() / 2 - (rows * CELL_HEIGHT) / 2;
+  const startY =
+    kctx.height() / 2 - (rows * CELL_HEIGHT) / 2 + magicHeightNumber;
 
   let columnIndex = 0;
   let rowIndex = 0;
