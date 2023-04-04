@@ -104,5 +104,16 @@ export function createCard(options: {
   ]);
   pokemonObj.hidden = true;
 
+  if (import.meta.env.DEV) {
+    cardObj.add([
+      kctx.text(`P_ID: ${pokemonId}`, {
+        size: 22,
+      }),
+      kctx.anchor('bot'),
+      kctx.pos(0, 100),
+      kctx.color(kctx.RED),
+    ]);
+  }
+
   return cardObj;
 }
