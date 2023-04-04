@@ -1,6 +1,7 @@
 import { createCard, PokemonCardObj } from '@/gameobjects/Card';
 import shuffle from 'lodash/shuffle';
 import kctx from '@/lib/kctx';
+import scenes from '@/lib/scenes';
 
 const CELL_WIDTH = 150;
 const CELL_HEIGHT = 200;
@@ -76,6 +77,15 @@ function gameScene(pokemonIds: number[]): void {
       score += MATCH_BONUS;
       firstCard.setMatched();
       secondCard.setMatched();
+
+      const gameOver = allCards.every((card) => card.isMatched());
+      if (!gameOver) {
+        return;
+      }
+
+      await kctx.wait(1);
+
+      kctx.go(scenes.highscore, score);
     } else {
       score -= PENALTY;
       allCards.forEach((card) => card.trigger('pause'));
