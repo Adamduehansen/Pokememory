@@ -17,4 +17,4 @@ kctx.scene(scenes.preload, preloadScene);
 kctx.scene(scenes.game, gameScene);
 kctx.scene(scenes.highscore, highscoreScene);
 
-kctx.go(scenes.preload);
+kctx.go(scenes.highscore, 200);
