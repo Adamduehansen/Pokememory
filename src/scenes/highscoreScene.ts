@@ -35,28 +35,27 @@ function flashing(
   };
 }
 
-function highscoreScene(score: number): void {
+function AddScoreInputObject(score: number): GameObj {
   const scoreName: string[] = Array(3).fill('_');
-  let scoreSubmitted = false;
   let currentScoreNameLetterIndex = 0;
 
-  kctx.add([
+  const container = kctx.add([]);
+
+  container.add([
     kctx.text(`Your score ${score}`),
     kctx.pos(kctx.width() / 2, 100),
     kctx.anchor('center'),
-    'scoreLabel',
   ]);
 
-  kctx.add([
+  container.add([
     kctx.text('Enter initials'),
     kctx.pos(kctx.width() / 2, 200),
     kctx.anchor('center'),
-    'scoreLabel',
   ]);
 
   const scoreNameLetterObjects = scoreName.map(
     (scoreNameLetter, index): GameObj<TextComp | FlashingComp> => {
-      return kctx.add([
+      return container.add([
         kctx.text(scoreNameLetter),
         kctx.pos(kctx.width() / 2 + index * 100, 300),
         kctx.anchor('center'),
@@ -68,11 +67,8 @@ function highscoreScene(score: number): void {
     }
   );
 
-  kctx.onKeyPress((key) => {
-    if (
-      (key.length > 1 && key !== 'backspace' && key !== 'enter') ||
-      scoreSubmitted
-    ) {
+  const eventController = kctx.onKeyPress((key) => {
+    if (key.length > 1 && key !== 'backspace' && key !== 'enter') {
       return;
     }
 
@@ -83,8 +79,8 @@ function highscoreScene(score: number): void {
         return;
       }
       console.log('Submit score!', score);
-      kctx.destroyAll('scoreLabel');
-      scoreSubmitted = true;
+      container.destroy();
+      eventController.cancel();
     } else {
       scoreNameLetterObjects[currentScoreNameLetterIndex].text = key;
 
@@ -97,6 +93,12 @@ function highscoreScene(score: number): void {
       obj.disableFlashing = index !== currentScoreNameLetterIndex;
     });
   });
+
+  return container;
+}
+
+function highscoreScene(score: number): void {
+  AddScoreInputObject(score);
 }
 
 export default highscoreScene;
