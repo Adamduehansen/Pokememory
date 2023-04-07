@@ -1,9 +1,12 @@
 import flashing, { FlashingComp } from '@/components/flashing';
 import kctx from '@/lib/kctx';
+import scoreClient, { NewScore } from '@/lib/scoreClient';
 import { GameObj, TextComp } from 'kaboom';
 
-function AddScoreInputObject(score: number): GameObj {
-  const scoreName: string[] = Array(3).fill('_');
+function AddScoreInputObject(
+  score: number,
+  onScoreSubmit: (score: NewScore) => void
+): GameObj {
   let currentScoreNameLetterIndex = 0;
 
   const container = kctx.add([]);
@@ -20,8 +23,9 @@ function AddScoreInputObject(score: number): GameObj {
     kctx.anchor('center'),
   ]);
 
-  const scoreNameLetterObjects = scoreName.map(
-    (scoreNameLetter, index): GameObj<TextComp | FlashingComp> => {
+  const scoreNameLetterObjects = Array(3)
+    .fill('_')
+    .map((scoreNameLetter, index): GameObj<TextComp | FlashingComp> => {
       return container.add([
         kctx.text(scoreNameLetter),
         kctx.pos(kctx.width() / 2 + index * 100, 300),
@@ -29,10 +33,8 @@ function AddScoreInputObject(score: number): GameObj {
         flashing(0.5, {
           disable: index > 0,
         }),
-        'scoreLabel',
       ]);
-    }
-  );
+    });
 
   const eventController = kctx.onKeyPress((key) => {
     if (key.length > 1 && key !== 'backspace' && key !== 'enter') {
@@ -45,7 +47,10 @@ function AddScoreInputObject(score: number): GameObj {
       if (currentScoreNameLetterIndex < scoreNameLetterObjects.length - 1) {
         return;
       }
-      console.log('Submit score!', score);
+      onScoreSubmit({
+        name: scoreNameLetterObjects.map((obj) => obj.text).join(''),
+        score: score,
+      });
       container.destroy();
       eventController.cancel();
     } else {
@@ -64,8 +69,12 @@ function AddScoreInputObject(score: number): GameObj {
   return container;
 }
 
-function highscoreScene(score: number): void {
-  AddScoreInputObject(score);
+async function highscoreScene(score: number): Promise<void> {
+  AddScoreInputObject(score, scoreClient.addScore);
+
+  scoreClient.getAllScores().then((scores) => {
+    console.log(scores);
+  });
 }
 
 export default highscoreScene;
