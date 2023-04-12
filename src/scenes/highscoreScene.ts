@@ -28,7 +28,7 @@ function AddScoreInputObject(
     .map((scoreNameLetter, index): GameObj<TextComp | FlashingComp> => {
       return container.add([
         kctx.text(scoreNameLetter),
-        kctx.pos(kctx.width() / 2 + index * 100, 300),
+        kctx.pos(kctx.width() / 2 - 100 + index * 100, 300),
         kctx.anchor('center'),
         flashing(0.5, {
           disable: index > 0,
