@@ -14,7 +14,7 @@ function AddScoreInputObject(
       radius: 10,
     }),
     kctx.color(kctx.BLACK),
-    kctx.pos(kctx.width() / 2, 28),
+    kctx.pos(kctx.width() / 2, 250),
     kctx.outline(5, kctx.YELLOW),
     kctx.anchor('top'),
     kctx.z(10),
@@ -74,34 +74,65 @@ function AddScoreInputObject(
   return container;
 }
 
-async function renderScores(): Promise<void> {
-  kctx.add([
-    kctx.text('Scores'),
-    kctx.pos(kctx.width() / 2, 50),
-    kctx.anchor('center'),
-  ]);
-  const loadingScoreObj = kctx.add([
+async function renderScores(container: GameObj): Promise<void> {
+  const loadingScoreObj = container.add([
     kctx.text('Loading scores...'),
-    kctx.pos(kctx.center()),
+    kctx.pos(0, 0),
     kctx.anchor('center'),
   ]);
+
   const scores = await scoreClient.getAllScores();
   loadingScoreObj.destroy();
-  scores.map(({ name, score }, index) => {
-    const scoreEntry = kctx.add([kctx.pos(350, 100 + index * 100)]);
-    scoreEntry.add([kctx.text(name)]);
+
+  const topFiveScores = scores
+    .sort((scoreA, scoreB) => {
+      return scoreB.score - scoreA.score;
+    })
+    .splice(0, 5);
+
+  topFiveScores.forEach(({ name, score }, index) => {
+    const scoreEntry = container.add([
+      kctx.pos(0, -200 + index * 100),
+      kctx.rect(400, 50),
+      kctx.anchor('center'),
+      kctx.opacity(0),
+    ]);
+    scoreEntry.add([kctx.text(name), kctx.pos(-200, 0), kctx.anchor('left')]);
     scoreEntry.add([
       kctx.text(score.toString()),
-      kctx.pos(390, 0),
-      kctx.anchor('topright'),
+      kctx.anchor('right'),
+      kctx.pos(200, 0),
     ]);
-    return scoreEntry;
   });
 }
 
-function highscoreScene(score: number): void {
-  renderScores();
-  AddScoreInputObject(score, scoreClient.addScore);
+function highscoreScene(score: number | undefined): void {
+  const scoreContainer = kctx.add([
+    kctx.rect(600, 700, {
+      radius: 5,
+    }),
+    kctx.color(kctx.BLACK),
+    kctx.outline(5, kctx.GREEN),
+    kctx.pos(kctx.center()),
+    kctx.anchor('center'),
+  ]);
+
+  scoreContainer.add([
+    kctx.text('Scores'),
+    kctx.pos(0, -300),
+    kctx.anchor('center'),
+  ]);
+
+  async function scoreSubmitHandler(score: NewScore) {
+    await scoreClient.addScore(score);
+    renderScores(scoreContainer);
+  }
+
+  if (score === undefined) {
+    renderScores(scoreContainer);
+  } else {
+    AddScoreInputObject(score, scoreSubmitHandler);
+  }
 }
 
 export default highscoreScene;
