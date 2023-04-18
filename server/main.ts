@@ -25,7 +25,7 @@ async function addScore(context: Context) {
     id: crypto.randomUUID(),
     ...newScore,
   });
-  context.response.status = 401;
+  context.response.status = 201;
 }
 
 const router = new Router();
