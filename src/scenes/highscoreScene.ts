@@ -3,6 +3,17 @@ import kctx from '@/lib/kctx';
 import scoreClient, { NewScore } from '@/lib/scoreClient';
 import { GameObj, TextComp } from 'kaboom';
 
+function showErrorAlert(errorMessage: string): void {
+  kctx.add([
+    kctx.pos(kctx.center()),
+    kctx.anchor('center'),
+    kctx.text(errorMessage, {
+      size: 18,
+      width: 400,
+    }),
+  ]);
+}
+
 function AddScoreInputObject(
   score: number,
   onScoreSubmit: (score: NewScore) => void
@@ -81,8 +92,14 @@ async function renderScores(container: GameObj): Promise<void> {
     kctx.anchor('center'),
   ]);
 
-  const scores = await scoreClient.getAllScores();
+  const { data: scores, error } = await scoreClient.getAllScores();
   loadingScoreObj.destroy();
+
+  if (error !== undefined) {
+    console.error(error);
+    showErrorAlert('Unable to connect to score server.');
+    return;
+  }
 
   const topFiveScores = scores
     .sort((scoreA, scoreB) => {
@@ -124,7 +141,13 @@ function highscoreScene(score: number | undefined): void {
   ]);
 
   async function scoreSubmitHandler(score: NewScore) {
-    await scoreClient.addScore(score);
+    const { error } = await scoreClient.addScore(score);
+    if (error) {
+      showErrorAlert(
+        'Unable to connect to score server.\nYour score has been saved and will be sent once connection is restored!'
+      );
+      return;
+    }
     renderScores(scoreContainer);
   }
 
