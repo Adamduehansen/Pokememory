@@ -1,7 +1,8 @@
+import { GameObj, TextComp } from 'kaboom';
 import flashing, { FlashingComp } from '@/components/flashing';
 import kctx from '@/lib/kctx';
 import scoreClient, { NewScore } from '@/lib/scoreClient';
-import { GameObj, TextComp } from 'kaboom';
+import * as db from '../lib/db';
 
 function showErrorAlert(errorMessage: string): void {
   kctx.add([
@@ -123,6 +124,16 @@ async function renderScores(container: GameObj): Promise<void> {
   });
 }
 
+async function submitStoredScores() {
+  if (!(await scoreClient.ping())) {
+    return;
+  }
+
+  const storedScores = await db.getAll();
+  storedScores.forEach(scoreClient.addScore);
+  await db.clear();
+}
+
 function highscoreScene(score: number | undefined): void {
   const scoreContainer = kctx.add([
     kctx.rect(600, 700, {
@@ -140,11 +151,12 @@ function highscoreScene(score: number | undefined): void {
     kctx.anchor('center'),
   ]);
 
-  async function scoreSubmitHandler(score: NewScore) {
-    const { error } = await scoreClient.addScore(score);
+  async function scoreSubmitHandler(newScore: NewScore) {
+    const { error } = await scoreClient.addScore(newScore);
     if (error) {
+      db.addScore(newScore);
       showErrorAlert(
-        'Unable to connect to score server.\nYour score has been saved and will be sent once connection is restored!'
+        'Could not connect to the score server, but your score has been saved!\n\nVisit the highscore page again once connection is restored to submit your score...'
       );
       return;
     }
@@ -156,6 +168,8 @@ function highscoreScene(score: number | undefined): void {
   } else {
     AddScoreInputObject(score, scoreSubmitHandler);
   }
+
+  submitStoredScores();
 }
 
 export default highscoreScene;

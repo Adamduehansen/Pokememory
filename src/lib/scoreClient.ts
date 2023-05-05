@@ -9,6 +9,7 @@ export type NewScore = Pick<Score, 'name' | 'score'>;
 export interface ScoreClient {
   getAllScores: () => Promise<ScoreServiceResult<Score[]>>;
   addScore: (newScore: NewScore) => Promise<ScoreServiceResult<null>>;
+  ping: () => Promise<boolean>;
 }
 
 const { VITE_WS_URL } = import.meta.env;
@@ -52,9 +53,18 @@ async function addScore(newScore: NewScore): Promise<ScoreServiceResult<null>> {
   }
 }
 
+async function ping() {
+  try {
+    return (await fetch(VITE_WS_URL)).ok;
+  } catch (error) {
+    return false;
+  }
+}
+
 const scoreClient: ScoreClient = {
   getAllScores: getAllScores,
   addScore: addScore,
+  ping: ping,
 };
 
 export default scoreClient;
