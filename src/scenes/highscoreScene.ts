@@ -3,6 +3,8 @@ import flashing, { FlashingComp } from '@/components/flashing';
 import kctx from '@/lib/kctx';
 import scoreClient, { NewScore } from '@/lib/scoreClient';
 import * as db from '../lib/db';
+import createButton from '@/gameobjects/button';
+import scenes from '@/lib/scenes';
 
 function showErrorAlert(errorMessage: string): void {
   kctx.add([
@@ -150,6 +152,18 @@ function highscoreScene(score: number | undefined): void {
     kctx.pos(0, -300),
     kctx.anchor('center'),
   ]);
+
+  createButton({
+    text: 'New Game',
+    pos: kctx.vec2(kctx.width() / 2, kctx.height() / 2 + 300),
+    size: {
+      h: 50,
+      w: 200,
+    },
+    onClick: function () {
+      kctx.go(scenes.preload);
+    },
+  });
 
   async function scoreSubmitHandler(newScore: NewScore) {
     const { error } = await scoreClient.addScore(newScore);
