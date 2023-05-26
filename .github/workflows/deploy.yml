@@ -9,11 +9,6 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-env:
-  VITE_BASE: /pokememory/
-  VITE_ASSET_URL: https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/
-  VITE_MAX_ID: 150
-
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -45,6 +40,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          VITE_BASE: ${{ env.VITE_BASE }}
+          VITE_ASSET_URL: ${{ env.VITE_ASSET_URL }}
           VITE_MAX_ID: ${{ env.VITE_MAX_ID }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
