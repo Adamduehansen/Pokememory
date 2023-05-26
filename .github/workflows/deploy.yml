@@ -40,9 +40,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_BASE: ${{ env.VITE_BASE }}
-          VITE_ASSET_URL: ${{ env.VITE_ASSET_URL }}
-          VITE_MAX_ID: ${{ env.VITE_MAX_ID }}
+          VITE_BASE: ${{ vars.VITE_BASE }}
+          VITE_ASSET_URL: ${{ vars.VITE_ASSET_URL }}
+          VITE_MAX_ID: ${{ vars.VITE_MAX_ID }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
