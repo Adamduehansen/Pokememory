@@ -1,4 +1,9 @@
 export type Pokemon = {
   id: string;
-  pokemonId: number;
+  number: number;
+};
+
+export type Card = {
+  id: string;
+  flipped: boolean;
 };

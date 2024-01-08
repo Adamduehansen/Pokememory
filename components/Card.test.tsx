@@ -1,16 +1,16 @@
 import { cleanup, render, setup } from "$fresh-testing-library/components.ts";
 import { expect } from "$fresh-testing-library/expect.ts";
 import { afterEach, beforeAll, describe, it } from "$std/testing/bdd.ts";
-import { CardButton } from "./CardButton.tsx";
+import { Card } from "@components/Card.tsx";
 
-describe("components/CardButton", () => {
+describe("components/Card", () => {
   beforeAll(setup);
   afterEach(cleanup);
 
   it("Should show back of card as default", () => {
     // Arrange
     const screen = render(
-      <CardButton flipped={false} pokemonImageUrl="/pokemon-url" />,
+      <Card flipped={false} pokemonImageUrl="/pokemon-url" />,
     );
 
     // Act
@@ -23,7 +23,7 @@ describe("components/CardButton", () => {
   it("Should show pokemon when flipped", () => {
     // Arrange
     const screen = render(
-      <CardButton flipped={true} pokemonImageUrl="/pokemon-url" />,
+      <Card flipped={true} pokemonImageUrl="/pokemon-url" />,
     );
 
     // Act

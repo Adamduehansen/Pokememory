@@ -5,7 +5,7 @@ export function getPokemons(): Pokemon[] {
   for (let index = 0; index < 4; index++) {
     pokemons.push({
       id: crypto.randomUUID(),
-      pokemonId: index,
+      number: index,
     });
   }
   return pokemons;

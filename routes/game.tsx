@@ -1,10 +1,10 @@
 import { JSX } from "preact/jsx-runtime";
-import { GameGrid } from "@islands/GameGrid.tsx";
+import { GameBoard } from "@islands/GameBoard.tsx";
 
 export default function Game(): JSX.Element {
   return (
     <div>
-      <GameGrid />
+      <GameBoard />
     </div>
   );
 }

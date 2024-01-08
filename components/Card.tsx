@@ -1,4 +1,3 @@
-import { Signal } from "@preact/signals-core";
 import { JSX } from "preact/jsx-runtime";
 
 type Props = JSX.DOMAttributes<HTMLButtonElement> & {
@@ -6,7 +5,7 @@ type Props = JSX.DOMAttributes<HTMLButtonElement> & {
   pokemonImageUrl: string;
 };
 
-export function CardButton(
+export function Card(
   { flipped, pokemonImageUrl, ...rest }: Props,
 ): JSX.Element {
   const imageComponent = flipped === true
