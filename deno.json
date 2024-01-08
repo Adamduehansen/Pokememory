@@ -29,7 +29,11 @@
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.0",
     "$std/": "https://deno.land/std@0.208.0/",
     "$fresh-testing-library": "https://deno.land/x/fresh_testing_library@0.12.0/mod.ts",
-    "$fresh-testing-library/": "https://deno.land/x/fresh_testing_library@0.12.0/"
+    "$fresh-testing-library/": "https://deno.land/x/fresh_testing_library@0.12.0/",
+    "@lib/": "./lib/",
+    "@services/": "./services/",
+    "@components/": "./components/",
+    "@islands/": "./islands/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",

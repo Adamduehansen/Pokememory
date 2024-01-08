@@ -1,10 +1,10 @@
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
-import { Pokemon } from "../lib/types.ts";
-import { CardButton } from "../components/CardButton.tsx";
-import { getPokemons } from "../services/PokemonService.ts";
-import { randomSort, sliceArray } from "../lib/utils.ts";
+import { Pokemon } from "@lib/types.ts";
+import { CardButton } from "@components/CardButton.tsx";
+import { getPokemons } from "@services/PokemonService.ts";
+import { randomSort, sliceArray } from "@lib/utils.ts";
 
 export function GameGrid(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
@@ -21,7 +21,6 @@ export function GameGrid(): JSX.Element {
   useEffect(() => {
     const pokemons = getPokemons().sort(randomSort);
     pokemonGrid.value = sliceArray(pokemons, 2);
-
     isLoaded.value = true;
   }, []);
 
