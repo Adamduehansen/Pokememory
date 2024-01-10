@@ -1,32 +1,71 @@
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
-import { Pokemon } from "@lib/types.ts";
+import { Card, Pokemon, SpriteFacing } from "@lib/types.ts";
 import { getPokemons } from "@services/PokemonService.ts";
-import { randomSort, sliceArray } from "@lib/utils.ts";
+import { randomSort } from "@lib/utils.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
+
+function createCards(pokemons: Pokemon[], facing: SpriteFacing): Card[] {
+  return pokemons.map((pokemon): Card => {
+    return {
+      id: crypto.randomUUID(),
+      pokemonId: pokemon.id,
+      facing: facing,
+      isFlipped: false,
+    };
+  });
+}
+
+type FlippedCard = Card & {
+  isFlipped: true;
+};
+
+function getFlippedCards<T extends Card[]>(cards: T): FlippedCard[] {
+  return cards.filter((card) => card.isFlipped) as FlippedCard[];
+}
 
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
-  const pokemonGrid = useSignal<Pokemon[][]>([]);
-  const selectedOption1 = useSignal<string | undefined>(undefined);
-  const selectedOption2 = useSignal<string | undefined>(undefined);
+  const cards = useSignal<Card[]>([]);
 
   function flipCard(cardId: string) {
-    console.log("Flipping card:", cardId);
-    if (selectedOption1.value === undefined) {
-      selectedOption1.value = cardId;
-      return;
+    console.log("Attempting to flip card", cardId);
+
+    const flippedCards = getFlippedCards(cards.value);
+    if (flippedCards.length >= 2) {
+      cards.value = cards.value.map((card) => {
+        return {
+          ...card,
+          isFlipped: false,
+        };
+      });
     }
 
-    if (selectedOption2.value === undefined) {
-      selectedOption2.value = cardId;
-    }
+    cards.value = cards.value.map((card) => {
+      if (card.id !== cardId) {
+        return {
+          ...card,
+        };
+      }
+      return {
+        ...card,
+        isFlipped: true,
+      };
+    });
   }
 
   useEffect(() => {
-    const pokemons = getPokemons().sort(randomSort);
-    pokemonGrid.value = sliceArray(pokemons, 2);
+    const pokemons = getPokemons({
+      amount: 2,
+    });
+    cards.value = [
+      ...createCards(pokemons, "backside"),
+      ...createCards(pokemons, "frontside"),
+    ].sort(
+      randomSort,
+    );
+    console.log("Cards", cards.value);
     isLoaded.value = true;
   }, []);
 
@@ -36,10 +75,8 @@ export function GameBoard(): JSX.Element {
 
   return (
     <CardGrid
-      grid={pokemonGrid.value}
+      cards={cards.value}
       onCardSelected={flipCard}
-      selectedOption1={selectedOption1.value}
-      selectedOption2={selectedOption2.value}
     />
   );
 }

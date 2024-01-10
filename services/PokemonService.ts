@@ -1,11 +1,12 @@
-import { Pokemon } from "../lib/types.ts";
+import { Pokemon } from "@lib/types.ts";
 
-export function getPokemons(): Pokemon[] {
+export function getPokemons(options: {
+  amount: number;
+}): Pokemon[] {
   const pokemons: Pokemon[] = [];
-  for (let index = 0; index < 4; index++) {
+  for (let index = 1; index <= options.amount; index++) {
     pokemons.push({
-      id: crypto.randomUUID(),
-      number: index,
+      id: index,
     });
   }
   return pokemons;

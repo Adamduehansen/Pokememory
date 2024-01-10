@@ -1,36 +1,40 @@
 import { JSX } from "preact/jsx-runtime";
 import { Card } from "@components/Card.tsx";
-import { Pokemon } from "@lib/types.ts";
+import * as types from "@lib/types.ts";
 
 type Props = {
-  grid: Pokemon[][];
+  cards: types.Card[];
   onCardSelected: (id: string) => void;
-  selectedOption1: string | undefined;
-  selectedOption2: string | undefined;
 };
 
+function createPokemonUrl(
+  pokemonNumber: number,
+  facing: types.SpriteFacing,
+): string {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon${
+    facing === "backside" ? "/back/" : "/"
+  }${pokemonNumber}.png`;
+}
+
 export function CardGrid(
-  { grid, onCardSelected, selectedOption1, selectedOption2 }: Props,
+  { cards, onCardSelected }: Props,
 ): JSX.Element {
+  function makeOnCardSelected(cardId: string) {
+    return function () {
+      onCardSelected(cardId);
+    };
+  }
+
   return (
     <div>
-      {grid.map((row): JSX.Element => {
+      {cards.map((card): JSX.Element => {
         return (
-          <div role="row">
-            {row.map((pokemon): JSX.Element => {
-              const isFlipped = pokemon.id === selectedOption1 ||
-                pokemon.id === selectedOption2;
-
-              return (
-                <div role="cell">
-                  <Card
-                    flipped={isFlipped}
-                    pokemonImageUrl={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.number}.png`}
-                    onClick={() => onCardSelected(pokemon.id)}
-                  />
-                </div>
-              );
-            })}
+          <div>
+            <Card
+              flipped={card.isFlipped}
+              pokemonImageUrl={createPokemonUrl(card.pokemonId, card.facing)}
+              onClick={makeOnCardSelected(card.id)}
+            />
           </div>
         );
       })}

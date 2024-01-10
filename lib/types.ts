@@ -1,9 +1,12 @@
 export type Pokemon = {
-  id: string;
-  number: number;
+  id: number;
 };
+
+export type SpriteFacing = "frontside" | "backside";
 
 export type Card = {
   id: string;
-  flipped: boolean;
+  pokemonId: number;
+  facing: SpriteFacing;
+  isFlipped: boolean;
 };
