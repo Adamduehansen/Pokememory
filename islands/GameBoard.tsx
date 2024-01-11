@@ -96,8 +96,6 @@ export function GameBoard(): JSX.Element {
       }
 
       cards.value = setMatchingCards(cards.value, flippedCard1, flippedCard2);
-      console.log(cards.value);
-
       return;
     }
 
