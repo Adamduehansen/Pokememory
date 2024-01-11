@@ -61,6 +61,24 @@ function faceSelectedCardUp(
   });
 }
 
+function isSamePokemonId(card1: Card, card2: Card): boolean {
+  return card1.pokemonId === card2.pokemonId;
+}
+
+function setMatchingCards(cards: Card[], card1: Card, card2: Card): Card[] {
+  return cards.map((card): Card => {
+    if (card.id !== card1.id && card.id !== card2.id) {
+      return {
+        ...card,
+      };
+    }
+    return {
+      ...card,
+      isMatched: true,
+    };
+  });
+}
+
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
   const cards = useSignal<Card[]>([]);
@@ -72,7 +90,14 @@ export function GameBoard(): JSX.Element {
     const flippedCards = getFlippedCards(cards.value);
 
     if (flippedCards.length === 2) {
-      console.log("TODO: Check if cards matches on Pokemon number.");
+      const [flippedCard1, flippedCard2] = flippedCards;
+      if (!isSamePokemonId(flippedCard1, flippedCard2)) {
+        return;
+      }
+
+      cards.value = setMatchingCards(cards.value, flippedCard1, flippedCard2);
+      console.log(cards.value);
+
       return;
     }
 
