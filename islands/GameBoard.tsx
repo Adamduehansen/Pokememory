@@ -23,25 +23,9 @@ type FlippedCard = Card & {
 };
 
 function getFlippedCards<T extends Card[]>(cards: T): FlippedCard[] {
-  return cards.filter((card) => card.isFlipped) as FlippedCard[];
-}
-
-function faceCardsDownExceptTheSelected(
-  cards: Card[],
-  selectedCardId: string,
-): Card[] {
-  return cards.map((card) => {
-    if (card.id !== selectedCardId) {
-      return {
-        ...card,
-        isFlipped: false,
-      };
-    }
-    return {
-      ...card,
-      isFlipped: true,
-    };
-  });
+  return cards.filter((card) =>
+    card.isFlipped === true && card.isMatched == false
+  ) as FlippedCard[];
 }
 
 function faceSelectedCardUp(
@@ -79,15 +63,33 @@ function setMatchingCards(cards: Card[], card1: Card, card2: Card): Card[] {
   });
 }
 
+function turnNotMatchedCardDown(cards: Card[]): Card[] {
+  return cards.map((card): Card => {
+    if (card.isMatched) {
+      return {
+        ...card,
+      };
+    }
+
+    return {
+      ...card,
+      isFlipped: false,
+    };
+  });
+}
+
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
   const cards = useSignal<Card[]>([]);
 
   function flipCard(selectedCardId: string) {
-    console.log("Attempting to flip card", selectedCardId);
+    let flippedCards = getFlippedCards(cards.value);
+    if (flippedCards.length === 2) {
+      return;
+    }
 
     cards.value = faceSelectedCardUp(cards.value, selectedCardId);
-    const flippedCards = getFlippedCards(cards.value);
+    flippedCards = getFlippedCards(cards.value);
 
     if (flippedCards.length === 2) {
       const [flippedCard1, flippedCard2] = flippedCards;
@@ -98,10 +100,15 @@ export function GameBoard(): JSX.Element {
       cards.value = setMatchingCards(cards.value, flippedCard1, flippedCard2);
       return;
     }
+  }
 
-    if (flippedCards.length > 2) {
-      cards.value = faceCardsDownExceptTheSelected(cards.value, selectedCardId);
+  function resetCards(): void {
+    const flippedCards = getFlippedCards(cards.value);
+    if (flippedCards.length < 2) {
+      return;
     }
+
+    cards.value = turnNotMatchedCardDown(cards.value);
   }
 
   useEffect(() => {
@@ -123,9 +130,12 @@ export function GameBoard(): JSX.Element {
   }
 
   return (
-    <CardGrid
-      cards={cards.value}
-      onCardSelected={flipCard}
-    />
+    <div>
+      <button onClick={resetCards}>Face Cards Down</button>
+      <CardGrid
+        cards={cards.value}
+        onCardSelected={flipCard}
+      />
+    </div>
   );
 }
