@@ -9,4 +9,5 @@ export type Card = {
   pokemonId: number;
   facing: SpriteFacing;
   isFlipped: boolean;
+  isMatched: boolean;
 };

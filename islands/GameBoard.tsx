@@ -13,6 +13,7 @@ function createCards(pokemons: Pokemon[], facing: SpriteFacing): Card[] {
       pokemonId: pokemon.id,
       facing: facing,
       isFlipped: false,
+      isMatched: false,
     };
   });
 }
@@ -25,34 +26,59 @@ function getFlippedCards<T extends Card[]>(cards: T): FlippedCard[] {
   return cards.filter((card) => card.isFlipped) as FlippedCard[];
 }
 
+function faceCardsDownExceptTheSelected(
+  cards: Card[],
+  selectedCardId: string,
+): Card[] {
+  return cards.map((card) => {
+    if (card.id !== selectedCardId) {
+      return {
+        ...card,
+        isFlipped: false,
+      };
+    }
+    return {
+      ...card,
+      isFlipped: true,
+    };
+  });
+}
+
+function faceSelectedCardUp(
+  cards: Card[],
+  selectedCardId: string,
+): Card[] {
+  return cards.map((card) => {
+    if (card.id !== selectedCardId) {
+      return {
+        ...card,
+      };
+    }
+    return {
+      ...card,
+      isFlipped: true,
+    };
+  });
+}
+
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
   const cards = useSignal<Card[]>([]);
 
-  function flipCard(cardId: string) {
-    console.log("Attempting to flip card", cardId);
+  function flipCard(selectedCardId: string) {
+    console.log("Attempting to flip card", selectedCardId);
 
+    cards.value = faceSelectedCardUp(cards.value, selectedCardId);
     const flippedCards = getFlippedCards(cards.value);
-    if (flippedCards.length >= 2) {
-      cards.value = cards.value.map((card) => {
-        return {
-          ...card,
-          isFlipped: false,
-        };
-      });
+
+    if (flippedCards.length === 2) {
+      console.log("TODO: Check if cards matches on Pokemon number.");
+      return;
     }
 
-    cards.value = cards.value.map((card) => {
-      if (card.id !== cardId) {
-        return {
-          ...card,
-        };
-      }
-      return {
-        ...card,
-        isFlipped: true,
-      };
-    });
+    if (flippedCards.length > 2) {
+      cards.value = faceCardsDownExceptTheSelected(cards.value, selectedCardId);
+    }
   }
 
   useEffect(() => {
