@@ -1,10 +1,11 @@
-import { useEffect } from "preact/hooks";
+import { useEffect, useReducer } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
 import { Card, Pokemon, SpriteFacing } from "@lib/types.ts";
 import { getPokemons } from "@services/PokemonService.ts";
 import { randomSort } from "@lib/utils.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
+import { cardReducer, CardState } from "@lib/cardReducer.ts";
 
 function createCards(pokemons: Pokemon[], facing: SpriteFacing): Card[] {
   return pokemons.map((pokemon): Card => {
@@ -78,50 +79,58 @@ function turnNotMatchedCardDown(cards: Card[]): Card[] {
   });
 }
 
+const initialState: CardState = {
+  cards: [],
+};
+
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
-  const cards = useSignal<Card[]>([]);
+  const [cardsState, dispatch] = useReducer(cardReducer, initialState);
 
   function flipCard(selectedCardId: string) {
-    let flippedCards = getFlippedCards(cards.value);
-    if (flippedCards.length === 2) {
-      return;
-    }
+    // let flippedCards = getFlippedCards(cardsState.value);
+    // if (flippedCards.length === 2) {
+    //   return;
+    // }
 
-    cards.value = faceSelectedCardUp(cards.value, selectedCardId);
-    flippedCards = getFlippedCards(cards.value);
+    // cardsState.value = faceSelectedCardUp(cardsState.value, selectedCardId);
+    // flippedCards = getFlippedCards(cardsState.value);
 
-    if (flippedCards.length === 2) {
-      const [flippedCard1, flippedCard2] = flippedCards;
-      if (!isSamePokemonId(flippedCard1, flippedCard2)) {
-        return;
-      }
+    // if (flippedCards.length < 2) {
+    //   return;
+    // }
 
-      cards.value = setMatchingCards(cards.value, flippedCard1, flippedCard2);
-      return;
-    }
+    // const [flippedCard1, flippedCard2] = flippedCards;
+    // if (!isSamePokemonId(flippedCard1, flippedCard2)) {
+    //   return;
+    // }
+
+    // cardsState.value = setMatchingCards(
+    //   cardsState.value,
+    //   flippedCard1,
+    //   flippedCard2,
+    // );
   }
 
   function resetCards(): void {
-    const flippedCards = getFlippedCards(cards.value);
-    if (flippedCards.length < 2) {
-      return;
-    }
-
-    cards.value = turnNotMatchedCardDown(cards.value);
+    dispatch({ type: "reset" });
   }
 
   useEffect(() => {
     const pokemons = getPokemons({
       amount: 2,
     });
-    cards.value = [
+    const cards = [
       ...createCards(pokemons, "backside"),
       ...createCards(pokemons, "frontside"),
     ].sort(
       randomSort,
     );
-    console.log("Cards", cards.value);
+    console.log("Cards", cards);
+    dispatch({
+      type: "setCards",
+      payload: cards,
+    });
     isLoaded.value = true;
   }, []);
 
@@ -133,7 +142,7 @@ export function GameBoard(): JSX.Element {
     <div>
       <button onClick={resetCards}>Face Cards Down</button>
       <CardGrid
-        cards={cards.value}
+        cards={cardsState.cards}
         onCardSelected={flipCard}
       />
     </div>
