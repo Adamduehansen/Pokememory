@@ -19,66 +19,6 @@ function createCards(pokemons: Pokemon[], facing: SpriteFacing): Card[] {
   });
 }
 
-type FlippedCard = Card & {
-  isFlipped: true;
-};
-
-function getFlippedCards<T extends Card[]>(cards: T): FlippedCard[] {
-  return cards.filter((card) =>
-    card.isFlipped === true && card.isMatched == false
-  ) as FlippedCard[];
-}
-
-function faceSelectedCardUp(
-  cards: Card[],
-  selectedCardId: string,
-): Card[] {
-  return cards.map((card) => {
-    if (card.id !== selectedCardId) {
-      return {
-        ...card,
-      };
-    }
-    return {
-      ...card,
-      isFlipped: true,
-    };
-  });
-}
-
-function isSamePokemonId(card1: Card, card2: Card): boolean {
-  return card1.pokemonId === card2.pokemonId;
-}
-
-function setMatchingCards(cards: Card[], card1: Card, card2: Card): Card[] {
-  return cards.map((card): Card => {
-    if (card.id !== card1.id && card.id !== card2.id) {
-      return {
-        ...card,
-      };
-    }
-    return {
-      ...card,
-      isMatched: true,
-    };
-  });
-}
-
-function turnNotMatchedCardDown(cards: Card[]): Card[] {
-  return cards.map((card): Card => {
-    if (card.isMatched) {
-      return {
-        ...card,
-      };
-    }
-
-    return {
-      ...card,
-      isFlipped: false,
-    };
-  });
-}
-
 const initialState: CardState = {
   cards: [],
 };
@@ -87,33 +27,11 @@ export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
   const [cardsState, dispatch] = useReducer(cardReducer, initialState);
 
-  function flipCard(selectedCardId: string) {
-    // let flippedCards = getFlippedCards(cardsState.value);
-    // if (flippedCards.length === 2) {
-    //   return;
-    // }
-
-    // cardsState.value = faceSelectedCardUp(cardsState.value, selectedCardId);
-    // flippedCards = getFlippedCards(cardsState.value);
-
-    // if (flippedCards.length < 2) {
-    //   return;
-    // }
-
-    // const [flippedCard1, flippedCard2] = flippedCards;
-    // if (!isSamePokemonId(flippedCard1, flippedCard2)) {
-    //   return;
-    // }
-
-    // cardsState.value = setMatchingCards(
-    //   cardsState.value,
-    //   flippedCard1,
-    //   flippedCard2,
-    // );
+  function flipCard() {
   }
 
   function resetCards(): void {
-    dispatch({ type: "reset" });
+    dispatch({ type: "resetCards" });
   }
 
   useEffect(() => {
