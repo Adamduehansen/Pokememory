@@ -33,7 +33,8 @@
     "@lib/": "./lib/",
     "@services/": "./services/",
     "@components/": "./components/",
-    "@islands/": "./islands/"
+    "@islands/": "./islands/",
+    "@hooks/": "./hooks/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",

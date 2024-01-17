@@ -1,11 +1,11 @@
-import { useEffect, useReducer } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
 import { Card, Pokemon, SpriteFacing } from "@lib/types.ts";
 import { getPokemons } from "@services/PokemonService.ts";
 import { randomSort } from "@lib/utils.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
-import { cardReducer, CardState } from "@lib/cardReducer.ts";
+import { useCards } from "@hooks/useCards.ts";
 
 function createCards(pokemons: Pokemon[], facing: SpriteFacing): Card[] {
   return pokemons.map((pokemon): Card => {
@@ -19,20 +19,9 @@ function createCards(pokemons: Pokemon[], facing: SpriteFacing): Card[] {
   });
 }
 
-const initialState: CardState = {
-  cards: [],
-};
-
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
-  const [cardsState, dispatch] = useReducer(cardReducer, initialState);
-
-  function flipCard() {
-  }
-
-  function resetCards(): void {
-    dispatch({ type: "resetCards" });
-  }
+  const { cards, flipCard, resetCards, setCards } = useCards([]);
 
   useEffect(() => {
     const pokemons = getPokemons({
@@ -45,10 +34,7 @@ export function GameBoard(): JSX.Element {
       randomSort,
     );
     console.log("Cards", cards);
-    dispatch({
-      type: "setCards",
-      payload: cards,
-    });
+    setCards(cards);
     isLoaded.value = true;
   }, []);
 
@@ -60,7 +46,7 @@ export function GameBoard(): JSX.Element {
     <div>
       <button onClick={resetCards}>Face Cards Down</button>
       <CardGrid
-        cards={cardsState.cards}
+        cards={cards}
         onCardSelected={flipCard}
       />
     </div>
