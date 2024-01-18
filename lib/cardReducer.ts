@@ -1,4 +1,5 @@
-import { Card } from "@lib/types.ts";
+import { Card, SpriteFacing } from "@lib/types.ts";
+import { randomSort } from "@lib/utils.ts";
 
 export type CardState = {
   cards: Card[];
@@ -6,7 +7,7 @@ export type CardState = {
 
 export type SetCardsAction = {
   type: "setCards";
-  payload: Card[];
+  payload: number[];
 };
 
 export type FlipCardAction = {
@@ -76,11 +77,26 @@ function setMatchingCards(cards: Card[], card1: Card, card2: Card): Card[] {
   });
 }
 
+function createCards(pokemonsIds: number[], facing: SpriteFacing): Card[] {
+  return pokemonsIds.map((pokemonId): Card => {
+    return {
+      id: crypto.randomUUID(),
+      pokemonId: pokemonId,
+      facing: facing,
+      isFlipped: false,
+      isMatched: false,
+    };
+  });
+}
+
 export function cardReducer(state: CardState, action: Actions): CardState {
   switch (action.type) {
     case "setCards":
       return {
-        cards: [...action.payload],
+        cards: [
+          ...createCards(action.payload, "backside"),
+          ...createCards(action.payload, "frontside"),
+        ].sort(randomSort),
       };
     case "flipCard": {
       let flippedCards = getFlippedCards(state.cards);

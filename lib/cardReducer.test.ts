@@ -1,49 +1,64 @@
 import { describe, it } from "$std/testing/bdd.ts";
 import {
+  returnsNext,
+  stub,
+} from "https://deno.land/std@0.212.0/testing/mock.ts";
+import {
   cardReducer,
   CardState,
   FlipCardAction,
   ResetCardsAction,
   SetCardsAction,
 } from "@lib/cardReducer.ts";
-import { Card } from "@lib/types.ts";
-import { assertEquals } from "$std/assert/mod.ts";
+import { assertArrayIncludes, assertEquals } from "$std/assert/mod.ts";
 
 describe("cardReducer", () => {
   describe("setCards action", () => {
     it("Should set the cards", () => {
       // Arrange
+      const guid1: `${string}-${string}-${string}-${string}-${string}` =
+        "1-1-1-1-1";
+      const guid2: `${string}-${string}-${string}-${string}-${string}` =
+        "2-2-2-2-2";
+      const cryptoRandomUUIDStub = stub(
+        crypto,
+        "randomUUID",
+        returnsNext([guid1, guid2]),
+      );
       const currentState: CardState = {
         cards: [],
       };
       const expectedState: CardState = {
         cards: [
           {
-            id: "1",
+            id: guid1,
             pokemonId: 2,
             facing: "backside",
             isFlipped: false,
             isMatched: false,
           },
+          {
+            id: guid2,
+            pokemonId: 2,
+            facing: "frontside",
+            isFlipped: false,
+            isMatched: false,
+          },
         ],
       };
-      const cards: Card[] = [{
-        id: "1",
-        pokemonId: 2,
-        facing: "backside",
-        isFlipped: false,
-        isMatched: false,
-      }];
+      const pokemonIds = [2];
       const action: SetCardsAction = {
         type: "setCards",
-        payload: cards,
+        payload: pokemonIds,
       };
 
       // Act
       const actualState = cardReducer(currentState, action);
 
       // Assert
-      assertEquals(actualState, expectedState);
+      assertArrayIncludes(actualState.cards, expectedState.cards);
+
+      cryptoRandomUUIDStub.restore();
     });
   });
 
