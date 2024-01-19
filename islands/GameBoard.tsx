@@ -27,14 +27,7 @@ export function GameBoard(): JSX.Element {
     const pokemons = getPokemons({
       amount: 2,
     });
-    const cards = [
-      ...createCards(pokemons, "backside"),
-      ...createCards(pokemons, "frontside"),
-    ].sort(
-      randomSort,
-    );
-    console.log("Cards", cards);
-    setCards(cards);
+    setCards(pokemons.map((pokemon) => pokemon.id));
     isLoaded.value = true;
   }, []);
 

@@ -18,10 +18,10 @@ export function useCards(defaultCards: Card[]) {
     dispatch({ type: "resetCards" });
   }
 
-  function setCards(cards: Card[]): void {
+  function setCards(pokemonIds: number[]): void {
     dispatch({
       type: "setCards",
-      payload: cards,
+      payload: pokemonIds,
     });
   }
 
