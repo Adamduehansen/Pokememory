@@ -251,9 +251,30 @@ describe("cardReducer", () => {
           {
             id: "3",
             pokemonId: 2,
-            facing: "backside",
+            facing: "frontside",
             isFlipped: true,
             isMatched: false,
+          },
+          {
+            id: "4",
+            pokemonId: 2,
+            facing: "backside",
+            isFlipped: false,
+            isMatched: false,
+          },
+          {
+            id: "5",
+            pokemonId: 3,
+            facing: "backside",
+            isFlipped: true,
+            isMatched: true,
+          },
+          {
+            id: "6",
+            pokemonId: 3,
+            facing: "backside",
+            isFlipped: true,
+            isMatched: true,
           },
         ],
       };
@@ -276,9 +297,30 @@ describe("cardReducer", () => {
           {
             id: "3",
             pokemonId: 2,
+            facing: "frontside",
+            isFlipped: false,
+            isMatched: false,
+          },
+          {
+            id: "4",
+            pokemonId: 2,
             facing: "backside",
             isFlipped: false,
             isMatched: false,
+          },
+          {
+            id: "5",
+            pokemonId: 3,
+            facing: "backside",
+            isFlipped: true,
+            isMatched: true,
+          },
+          {
+            id: "6",
+            pokemonId: 3,
+            facing: "backside",
+            isFlipped: true,
+            isMatched: true,
           },
         ],
       };
