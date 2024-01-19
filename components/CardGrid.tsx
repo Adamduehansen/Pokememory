@@ -26,12 +26,12 @@ export function CardGrid(
   }
 
   return (
-    <div>
+    <div class="card-grid">
       {cards.map((card): JSX.Element => {
         console.log(card);
 
         return (
-          <div>
+          <div class="card-grid__item">
             <Card
               flipped={card.isFlipped || card.isMatched}
               pokemonImageUrl={createPokemonUrl(card.pokemonId, card.facing)}
