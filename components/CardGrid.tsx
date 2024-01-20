@@ -28,8 +28,6 @@ export function CardGrid(
   return (
     <div class="card-grid">
       {cards.map((card): JSX.Element => {
-        console.log(card);
-
         return (
           <div class="card-grid__item">
             <Card
