@@ -1,6 +1,6 @@
 import { JSX } from "preact/jsx-runtime";
 
-type Props = JSX.DOMAttributes<HTMLButtonElement> & {
+type Props = JSX.HTMLAttributes<HTMLButtonElement> & {
   flipped: boolean;
   pokemonImageUrl: string;
 };
