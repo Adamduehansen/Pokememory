@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
 import classnames from "classnames";
@@ -17,7 +17,9 @@ function isAllMatched(cards: Card[]): boolean {
 
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
+  const resetDialogRef = useRef<HTMLDialogElement>(null);
   const { cards, flipCard, resetCards, setCards } = useCards([]);
+
   const hasTwoNonMatchedCardsFlipped =
     cards.filter((card) => card.isFlipped && !card.isMatched).length === 2;
 
@@ -40,22 +42,18 @@ export function GameBoard(): JSX.Element {
   }
 
   return (
-    <div class="relative">
+    <div class="game-board">
       <CardGrid
         cards={cards}
         onCardSelected={flipCard}
       />
-      <div
-        class={classnames("flip-cards-button-conatainer", {
-          "hidden": !hasTwoNonMatchedCardsFlipped,
-        })}
-      >
+      <dialog ref={resetDialogRef} open={hasTwoNonMatchedCardsFlipped}>
         <button
           onClick={resetCards}
         >
           Face Cards Down
         </button>
-      </div>
+      </dialog>
     </div>
   );
 }
