@@ -1,6 +1,7 @@
 import { useEffect } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
+import classnames from "classnames";
 import { getPokemons } from "@services/PokemonService.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
 import { useCards } from "@hooks/useCards.ts";
@@ -17,6 +18,8 @@ function isAllMatched(cards: Card[]): boolean {
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
   const { cards, flipCard, resetCards, setCards } = useCards([]);
+  const hasTwoNonMatchedCardsFlipped =
+    cards.filter((card) => card.isFlipped && !card.isMatched).length === 2;
 
   useEffect(() => {
     const pokemons = getPokemons({
@@ -37,12 +40,22 @@ export function GameBoard(): JSX.Element {
   }
 
   return (
-    <div>
+    <div class="relative">
       <CardGrid
         cards={cards}
         onCardSelected={flipCard}
       />
-      <button onClick={resetCards}>Face Cards Down</button>
+      <div
+        class={classnames("flip-cards-button-conatainer", {
+          "hidden": !hasTwoNonMatchedCardsFlipped,
+        })}
+      >
+        <button
+          onClick={resetCards}
+        >
+          Face Cards Down
+        </button>
+      </div>
     </div>
   );
 }
