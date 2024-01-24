@@ -14,6 +14,7 @@ export function ResetCardsDialog({ open, onReset }: Props): JSX.Element {
     if (open === false) {
       return;
     }
+
     buttonRef.current!.focus();
   }, [open]);
 
