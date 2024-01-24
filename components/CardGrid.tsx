@@ -34,7 +34,7 @@ export function CardGrid(
               flipped={card.isFlipped || card.isMatched}
               pokemonImageUrl={createPokemonUrl(card.pokemonId, card.facing)}
               onClick={makeOnCardSelected(card.id)}
-              disabled={card.isMatched}
+              disabled={card.isMatched || card.isFlipped}
             />
           </div>
         );
