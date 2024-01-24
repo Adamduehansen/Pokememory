@@ -25,8 +25,9 @@ export function GameOverDialog({ open, score }: Props): JSX.Element {
         <fieldset>
           <legend>Submit your score</legend>
           <div>
-            <label htmlFor="">Name</label>
+            <label htmlFor="name-input">Name</label>
             <input
+              id="name-input"
               ref={nameInputRef}
               type="text"
               placeholder="Enter your a name"
