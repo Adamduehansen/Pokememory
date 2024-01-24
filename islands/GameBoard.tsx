@@ -5,6 +5,7 @@ import { getPokemons } from "@services/PokemonService.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
 import { useCards } from "@hooks/useCards.ts";
 import { Card } from "@lib/types.ts";
+import { Dialog } from "@components/Dialog.tsx";
 
 function isMatchedCard(card: Card): boolean {
   return card.isMatched === true;
@@ -21,6 +22,7 @@ export function GameBoard(): JSX.Element {
 
   const hasTwoNonMatchedCardsFlipped =
     cards.filter((card) => card.isFlipped && !card.isMatched).length === 2;
+  const allMatched = isAllMatched(cards);
 
   useEffect(() => {
     const pokemons = getPokemons({
@@ -29,12 +31,6 @@ export function GameBoard(): JSX.Element {
     setCards(pokemons.map((pokemon) => pokemon.id));
     isLoaded.value = true;
   }, []);
-
-  useEffect(() => {
-    if (isAllMatched(cards)) {
-      console.log("Done");
-    }
-  }, [cards]);
 
   if (isLoaded.value === false) {
     return <>Loading game...</>;
@@ -46,13 +42,29 @@ export function GameBoard(): JSX.Element {
         cards={cards}
         onCardSelected={flipCard}
       />
-      <dialog ref={resetDialogRef} open={hasTwoNonMatchedCardsFlipped}>
+      <Dialog ref={resetDialogRef} open={hasTwoNonMatchedCardsFlipped}>
         <button
           onClick={resetCards}
         >
           Face Cards Down
         </button>
-      </dialog>
+      </Dialog>
+      <Dialog open={allMatched}>
+        <p>Game over!</p>
+        <p>Your score:</p>
+        <form>
+          <fieldset>
+            <legend>Submit your score</legend>
+            <div>
+              <label htmlFor="">Name</label>
+              <input type="text" placeholder="Enter your a name" autoFocus />
+            </div>
+            <button>Submit score</button>
+          </fieldset>
+        </form>
+        <a href="/scoreboard">Go to scoreboard</a>
+        <a href="/game">New game</a>
+      </Dialog>
     </div>
   );
 }
