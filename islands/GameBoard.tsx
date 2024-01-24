@@ -11,18 +11,28 @@ function isMatchedCard(card: Card): boolean {
   return card.isMatched === true;
 }
 
-function isAllMatched(cards: Card[]): boolean {
+function isAllCardsMatched(cards: Card[]): boolean {
   return cards.length > 0 && cards.every(isMatchedCard);
 }
 
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
+  const score = useSignal<number>(0);
   const resetDialogRef = useRef<HTMLDialogElement>(null);
   const { cards, flipCard, resetCards, setCards } = useCards([]);
 
   const hasTwoNonMatchedCardsFlipped =
     cards.filter((card) => card.isFlipped && !card.isMatched).length === 2;
-  const allMatched = isAllMatched(cards);
+
+  function onCardSelected(id: string): void {
+    flipCard(id);
+    score.value += 25;
+  }
+
+  function onCardsReset(): void {
+    resetCards();
+    score.value -= 25;
+  }
 
   useEffect(() => {
     const pokemons = getPokemons({
@@ -38,20 +48,21 @@ export function GameBoard(): JSX.Element {
 
   return (
     <div class="game-board">
+      <p>Score {score.value}</p>
       <CardGrid
         cards={cards}
-        onCardSelected={flipCard}
+        onCardSelected={onCardSelected}
       />
       <Dialog ref={resetDialogRef} open={hasTwoNonMatchedCardsFlipped}>
         <button
-          onClick={resetCards}
+          onClick={onCardsReset}
         >
           Face Cards Down
         </button>
       </Dialog>
-      <Dialog open={allMatched}>
+      <Dialog open={isAllCardsMatched(cards)}>
         <p>Game over!</p>
-        <p>Your score:</p>
+        <p>Your score is: {score.value}</p>
         <form>
           <fieldset>
             <legend>Submit your score</legend>
