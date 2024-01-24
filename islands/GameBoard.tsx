@@ -15,6 +15,10 @@ function isAllCardsMatched(cards: Card[]): boolean {
   return cards.length > 0 && cards.every(isMatchedCard);
 }
 
+function isFlippedNotMatchedCard(card: Card): boolean {
+  return card.isFlipped && !card.isMatched;
+}
+
 export function GameBoard(): JSX.Element {
   const isLoaded = useSignal<boolean>(false);
   const score = useSignal<number>(0);
@@ -22,7 +26,7 @@ export function GameBoard(): JSX.Element {
   const { cards, flipCard, resetCards, setCards } = useCards([]);
 
   const hasTwoNonMatchedCardsFlipped =
-    cards.filter((card) => card.isFlipped && !card.isMatched).length === 2;
+    cards.filter(isFlippedNotMatchedCard).length === 2;
 
   function onCardSelected(id: string): void {
     flipCard(id);
