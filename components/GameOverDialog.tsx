@@ -1,5 +1,6 @@
 import { JSX } from "preact/jsx-runtime";
 import { Dialog } from "@components/Dialog.tsx";
+import { useEffect, useRef } from "preact/hooks";
 
 type Props = {
   open: boolean;
@@ -7,6 +8,15 @@ type Props = {
 };
 
 export function GameOverDialog({ open, score }: Props): JSX.Element {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (open === false) {
+      return;
+    }
+    nameInputRef.current!.focus();
+  }, [open]);
+
   return (
     <Dialog open={open}>
       <p>Game over!</p>
@@ -16,7 +26,11 @@ export function GameOverDialog({ open, score }: Props): JSX.Element {
           <legend>Submit your score</legend>
           <div>
             <label htmlFor="">Name</label>
-            <input type="text" placeholder="Enter your a name" autoFocus />
+            <input
+              ref={nameInputRef}
+              type="text"
+              placeholder="Enter your a name"
+            />
           </div>
           <button>Submit score</button>
         </fieldset>
