@@ -5,13 +5,3 @@
     display: block;
   }
 }
-
-/* Utilities */
-
-.hidden {
-  display: none !important;
-}
-
-.relative {
-  position: relative;
-}

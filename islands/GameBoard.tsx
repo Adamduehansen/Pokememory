@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import { useSignal } from "@preact/signals";
-import classnames from "classnames";
 import { getPokemons } from "@services/PokemonService.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
 import { useCards } from "@hooks/useCards.ts";
