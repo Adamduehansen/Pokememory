@@ -5,6 +5,7 @@
 
   .card-grid__item button {
     width: 100%;
+    cursor: pointer;
   }
   
   .card-grid__item img {
