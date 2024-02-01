@@ -1,26 +1,28 @@
 import { useSignal } from "@preact/signals";
 import { JSX } from "preact/jsx-runtime";
 
-type Props = {
+export type Props = {
   onScoreSubmit: (name: string) => void;
+  hidden: boolean;
 };
 
-export function ScoreForm(props: Props): JSX.Element {
+export function ScoreForm({ onScoreSubmit, hidden }: Props): JSX.Element {
   const name = useSignal("");
 
+  const onSubmit: JSX.GenericEventHandler<HTMLFormElement> = function (event) {
+    event.preventDefault();
+
+    if (name.value === "") {
+      return;
+    }
+
+    onScoreSubmit(name.value);
+
+    name.value = "";
+  };
+
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (name.value === "") {
-          return;
-        }
-
-        props.onScoreSubmit(name.value);
-
-        name.value = "";
-      }}
-    >
+    <form onSubmit={onSubmit} hidden={hidden}>
       <fieldset>
         <legend>Submit your score!</legend>
         <div>

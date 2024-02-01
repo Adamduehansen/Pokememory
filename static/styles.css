@@ -6,3 +6,7 @@
     display: block;
   }
 }
+
+button[aria-disabled="true"] {
+  opacity: 0.4;
+}

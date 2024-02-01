@@ -5,8 +5,8 @@ import { getPokemons } from "@services/PokemonService.ts";
 import { CardGrid } from "@components/CardGrid.tsx";
 import { useCards } from "@hooks/useCards.ts";
 import { Card } from "@lib/types.ts";
-import { ResetCardsDialog } from "@components/ResetCardsDialog.tsx";
-import { GameOverDialog } from "@components/GameOverDialog.tsx";
+import { ResetCardsDialog } from "./ResetCardsDialog.tsx";
+import { GameOverDialog } from "@islands/GameOverDialog.tsx";
 
 function isMatchedCard(card: Card): boolean {
   return card.isMatched === true;

@@ -6,7 +6,11 @@ import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $game from "./routes/game.tsx";
 import * as $index from "./routes/index.tsx";
+import * as $Dialog from "./islands/Dialog.tsx";
 import * as $GameBoard from "./islands/GameBoard.tsx";
+import * as $GameOverDialog from "./islands/GameOverDialog.tsx";
+import * as $ResetCardsDialog from "./islands/ResetCardsDialog.tsx";
+import * as $ScoreForm from "./islands/ScoreForm.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -17,7 +21,11 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
+    "./islands/Dialog.tsx": $Dialog,
     "./islands/GameBoard.tsx": $GameBoard,
+    "./islands/GameOverDialog.tsx": $GameOverDialog,
+    "./islands/ResetCardsDialog.tsx": $ResetCardsDialog,
+    "./islands/ScoreForm.tsx": $ScoreForm,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

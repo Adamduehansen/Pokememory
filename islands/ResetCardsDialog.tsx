@@ -1,5 +1,5 @@
 import { JSX } from "preact/jsx-runtime";
-import { Dialog } from "@components/Dialog.tsx";
+import { Dialog } from "@islands/Dialog.tsx";
 import { useEffect, useRef } from "preact/hooks";
 
 type Props = {
