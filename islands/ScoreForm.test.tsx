@@ -9,7 +9,6 @@ import { Props as ScoreFormProps, ScoreForm } from "@islands/ScoreForm.tsx";
 import { assertSpyCall, assertSpyCalls, spy } from "$std/testing/mock.ts";
 
 const defaultProps: ScoreFormProps = {
-  hidden: false,
   onScoreSubmit: () => {},
 };
 

@@ -3,10 +3,9 @@ import { JSX } from "preact/jsx-runtime";
 
 export type Props = {
   onScoreSubmit: (name: string) => void;
-  hidden: boolean;
 };
 
-export function ScoreForm({ onScoreSubmit, hidden }: Props): JSX.Element {
+export function ScoreForm({ onScoreSubmit }: Props): JSX.Element {
   const name = useSignal("");
 
   const onSubmit: JSX.GenericEventHandler<HTMLFormElement> = function (event) {
@@ -22,7 +21,7 @@ export function ScoreForm({ onScoreSubmit, hidden }: Props): JSX.Element {
   };
 
   return (
-    <form onSubmit={onSubmit} hidden={hidden}>
+    <form onSubmit={onSubmit}>
       <fieldset>
         <legend>Submit your score!</legend>
         <div>

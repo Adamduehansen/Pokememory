@@ -2,6 +2,7 @@ import { JSX } from "preact/jsx-runtime";
 import { Dialog } from "@islands/Dialog.tsx";
 import { ScoreForm } from "@islands/ScoreForm.tsx";
 import { useSignal } from "@preact/signals";
+import { useRef } from "preact/hooks";
 
 type Props = {
   open: boolean;
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export function GameOverDialog({ open, score }: Props): JSX.Element {
+  const scoreLinkRef = useRef<HTMLAnchorElement>(null);
   const isSubmitted = useSignal(false);
 
   async function onScoreFormSubmit(name: string) {
@@ -17,6 +19,7 @@ export function GameOverDialog({ open, score }: Props): JSX.Element {
       method: "POST",
       body: JSON.stringify({ name: name, score: score }),
     });
+    scoreLinkRef.current!.focus();
     console.log(response);
   }
 
@@ -27,9 +30,15 @@ export function GameOverDialog({ open, score }: Props): JSX.Element {
       <div role="alert">
         {isSubmitted.value === true ? "Score submitted" : ""}
       </div>
-      <ScoreForm hidden={isSubmitted.value} onScoreSubmit={onScoreFormSubmit} />
+      {isSubmitted.value === false && (
+        <ScoreForm
+          onScoreSubmit={onScoreFormSubmit}
+        />
+      )}
       <div>
-        <a href="/scoreboard">Go to scoreboard</a>
+        <a href="/scoreboard" ref={scoreLinkRef}>
+          Go to scoreboard
+        </a>
       </div>
       <div>
         <a href="/game">New game</a>
