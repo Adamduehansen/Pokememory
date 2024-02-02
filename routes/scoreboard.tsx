@@ -9,6 +9,7 @@ export default async function Scoreboard(): Promise<JSX.Element> {
     <div>
       <h1>Highscores</h1>
       <Scores scores={scores} />
+      <a href="/game">New game</a>
     </div>
   );
 }
