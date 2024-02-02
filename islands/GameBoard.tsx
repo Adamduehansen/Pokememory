@@ -40,7 +40,7 @@ export function GameBoard(): JSX.Element {
 
   useEffect(() => {
     const pokemons = getPokemons({
-      amount: 2,
+      amount: 6,
     });
     setCards(pokemons.map((pokemon) => pokemon.id));
     isLoaded.value = true;

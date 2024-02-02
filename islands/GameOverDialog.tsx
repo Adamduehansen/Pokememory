@@ -15,12 +15,11 @@ export function GameOverDialog({ open, score }: Props): JSX.Element {
 
   async function onScoreFormSubmit(name: string) {
     isSubmitted.value = true;
-    const response = await fetch("/game", {
+    await fetch("/game", {
       method: "POST",
       body: JSON.stringify({ name: name, score: score }),
     });
     scoreLinkRef.current!.focus();
-    console.log(response);
   }
 
   return (
