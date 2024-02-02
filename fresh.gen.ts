@@ -6,6 +6,7 @@ import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $game from "./routes/game.tsx";
 import * as $index from "./routes/index.tsx";
+import * as $scoreboard from "./routes/scoreboard.tsx";
 import * as $Dialog from "./islands/Dialog.tsx";
 import * as $GameBoard from "./islands/GameBoard.tsx";
 import * as $GameOverDialog from "./islands/GameOverDialog.tsx";
@@ -19,6 +20,7 @@ const manifest = {
     "./routes/_app.tsx": $_app,
     "./routes/game.tsx": $game,
     "./routes/index.tsx": $index,
+    "./routes/scoreboard.tsx": $scoreboard,
   },
   islands: {
     "./islands/Dialog.tsx": $Dialog,

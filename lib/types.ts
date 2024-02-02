@@ -1,3 +1,5 @@
+import { number, object, string } from "valibot";
+
 export type Pokemon = {
   id: number;
 };
@@ -11,3 +13,8 @@ export type Card = {
   isFlipped: boolean;
   isMatched: boolean;
 };
+
+export const scoreSchema = object({
+  name: string(),
+  score: number(),
+});
