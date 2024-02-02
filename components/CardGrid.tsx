@@ -27,7 +27,7 @@ export function CardGrid(
 
   return (
     <div class="card-grid">
-      {cards.map((card): JSX.Element => {
+      {cards.map((card, index): JSX.Element => {
         return (
           <div class="card-grid__item">
             <Card
@@ -35,6 +35,7 @@ export function CardGrid(
               pokemonImageUrl={createPokemonUrl(card.pokemonId, card.facing)}
               onClick={makeOnCardSelected(card.id)}
               disabled={card.isMatched || card.isFlipped}
+              aria-label={`Card ${index.toString()}`}
             />
           </div>
         );

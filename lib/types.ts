@@ -1,4 +1,4 @@
-import { number, object, string } from "valibot";
+import { number, object, Output, string } from "valibot";
 
 export type Pokemon = {
   id: number;
@@ -14,7 +14,9 @@ export type Card = {
   isMatched: boolean;
 };
 
-export const scoreSchema = object({
+export const ScoreSchema = object({
   name: string(),
   score: number(),
 });
+
+export type Score = Output<typeof ScoreSchema>;
