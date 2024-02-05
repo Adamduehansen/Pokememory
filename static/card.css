@@ -1,0 +1,23 @@
+.flip-container {
+  perspective: 1000px;
+}
+
+.flip-button {
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.flip-button.flipped {
+  transform: rotateY(180deg);
+}
+
+.front, .back {
+  backface-visibility: hidden;
+}
+
+.front {
+}
+
+.back {
+  transform: rotateY(180deg);
+}
