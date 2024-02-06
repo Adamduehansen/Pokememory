@@ -1,23 +1,55 @@
 import { useEffect, useRef } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 
-type Props = JSX.HTMLAttributes<HTMLDialogElement>;
+type Props = JSX.HTMLAttributes<HTMLDialogElement> & {
+  onClose: () => void;
+};
 
-export function Dialog(props: Props): JSX.Element {
-  const first = useRef<HTMLDialogElement>(null);
+function isClickInDialog(
+  { clientX, clientY }: MouseEvent,
+  dialog: HTMLDialogElement,
+): boolean {
+  const rect = dialog.getBoundingClientRect();
+  if (rect === undefined) {
+    return false;
+  }
 
-  const { open, ...rest } = props;
+  return (
+    clientX > rect.x &&
+    clientX < rect.x + rect.width &&
+    clientY > rect.y &&
+    clientY < rect.y + rect.height
+  );
+}
+
+export function Dialog(props: Props) {
+  const ref = useRef<HTMLDialogElement>(null);
+
+  const { open, onClose, ...rest } = props;
 
   useEffect(() => {
-    if (open === false) {
-      first.current!.close();
-    } else {
-      first.current!.showModal();
+    ref.current?.addEventListener("close", () => {
+      onClose();
+    });
+
+    ref.current?.addEventListener("click", (event) => {
+      if (isClickInDialog(event, ref.current!)) {
+        return;
+      }
+      onClose();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      ref.current?.showModal();
+      return;
     }
+    ref.current?.close();
   }, [open]);
 
   return (
-    <dialog ref={first} {...rest}>
+    <dialog ref={ref} {...rest}>
       {props.children}
     </dialog>
   );

@@ -8,6 +8,7 @@ type Props = {
 };
 
 export function ResetCardsDialog({ open, onReset }: Props): JSX.Element {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export function ResetCardsDialog({ open, onReset }: Props): JSX.Element {
   }, [open]);
 
   return (
-    <Dialog open={open}>
+    <Dialog ref={dialogRef} open={open} onClose={onReset}>
       <button
         ref={buttonRef}
         onClick={onReset}
