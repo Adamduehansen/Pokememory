@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-
+  
   .card-grid__item button {
     width: 100%;
     cursor: pointer;
@@ -15,5 +15,13 @@
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+  }
+  
+  @media screen and (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
