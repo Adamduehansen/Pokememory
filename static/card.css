@@ -1,10 +1,13 @@
 .flip-container {
   perspective: 1000px;
+  height: 150px;
 }
 
 .flip-button {
   transform-style: preserve-3d;
   transition: transform 0.5s;
+  position: relative;
+  height: 100%;
 }
 
 .flip-button.flipped {
@@ -12,10 +15,15 @@
 }
 
 .front, .back {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   backface-visibility: hidden;
-}
-
-.front {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .back {
