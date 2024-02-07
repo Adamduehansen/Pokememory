@@ -18,10 +18,7 @@ export function Card(
         {...rest}
       >
         <div class="front">
-          <img
-            src="/pokemon_card_back.gif"
-            alt="Backside of a Pokemon Card, pixelated"
-          />
+          <div className="pokeball"></div>
         </div>
         <div class="back">
           <img src={pokemonImageUrl} alt="Pokemon" />

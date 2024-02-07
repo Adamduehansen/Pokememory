@@ -1,31 +1,57 @@
+.pokeball {
+  display: block;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(
+      white 16px,
+      black 17px 18px,
+      white 19px 24px,
+      black 25px 32px,
+      transparent 33px
+    ),
+    linear-gradient(to bottom, red 0 50px, black 50px 55px, white 50px 100%);
+  border-radius: 50%;
+  border: 5px solid black;
+  box-shadow: inset -16px -8px 0 0 rgba(0, 0, 0, 0.2);
+}
+
 .flip-container {
   perspective: 1000px;
   height: 150px;
+  
+  .flip-button {
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    position: relative;
+    height: 100%;
+    background: #ffcb05;
+
+    .front, .back {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .front {
+      background: #ffcb05;
+    }
+    
+    .back {
+      background: green;
+      transform: rotateY(180deg);
+    }
+  }
+
+  .flip-button.flipped {
+    transform: rotateY(180deg);
+  }
+
 }
 
-.flip-button {
-  transform-style: preserve-3d;
-  transition: transform 0.5s;
-  position: relative;
-  height: 100%;
-}
 
-.flip-button.flipped {
-  transform: rotateY(180deg);
-}
-
-.front, .back {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  backface-visibility: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.back {
-  transform: rotateY(180deg);
-}
