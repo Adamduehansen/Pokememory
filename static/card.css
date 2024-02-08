@@ -3,11 +3,11 @@
   width: 100px;
   height: 100px;
   background: radial-gradient(
-      white 16px,
-      black 17px 18px,
-      white 19px 24px,
-      black 25px 32px,
-      transparent 33px
+    white 6px,
+    black 7px 8px,
+    white 9px 14px,
+    black 15px 18px,
+    transparent 22px
     ),
     linear-gradient(to bottom, red 0 50px, black 50px 55px, white 50px 100%);
   border-radius: 50%;
@@ -16,6 +16,9 @@
 }
 
 .flip-container {
+  --border-radius: 10px;
+  --border-radius-lg: 5px;
+  
   perspective: 1000px;
   height: 150px;
   
@@ -25,7 +28,12 @@
     position: relative;
     height: 100%;
     background: #ffcb05;
-
+    border-radius: var(--border-radius);
+    
+    @media screen and (min-width: 768px) {
+      border-radius: var(--border-radius-lg);
+    }
+    
     .front, .back {
       position: absolute;
       top: 0;
@@ -36,6 +44,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      border-radius: var(--border-radius);
+
+      @media screen and (min-width: 768px) {
+        border-radius: var(--border-radius-lg);
+      }
     }
 
     .front {
