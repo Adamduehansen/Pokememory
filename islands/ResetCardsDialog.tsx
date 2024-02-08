@@ -21,6 +21,7 @@ export function ResetCardsDialog({ open, onReset }: Props): JSX.Element {
 
   return (
     <Dialog ref={dialogRef} open={open} onClose={onReset}>
+      <p>No match, try again!</p>
       <button
         ref={buttonRef}
         onClick={onReset}
