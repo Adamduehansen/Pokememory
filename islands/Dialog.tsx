@@ -2,7 +2,7 @@ import { useEffect, useRef } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 
 type Props = JSX.HTMLAttributes<HTMLDialogElement> & {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 function isClickInDialog(
@@ -28,6 +28,10 @@ export function Dialog(props: Props) {
   const { open, onClose, ...rest } = props;
 
   useEffect(() => {
+    if (onClose === undefined) {
+      return;
+    }
+
     ref.current?.addEventListener("close", () => {
       onClose();
     });
@@ -38,7 +42,7 @@ export function Dialog(props: Props) {
       }
       onClose();
     });
-  }, []);
+  }, [onClose]);
 
   useEffect(() => {
     if (open) {
