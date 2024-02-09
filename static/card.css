@@ -29,11 +29,20 @@
     height: 100%;
     background: #ffcb05;
     border-radius: var(--border-radius);
-    
+    border-width: 5px;
+
     @media screen and (min-width: 768px) {
       border-radius: var(--border-radius-lg);
     }
+
+    &.matched {
+      border-color: green;
+    }
     
+    &.invalid {
+      border-color: red;
+    }
+
     .front, .back {
       position: absolute;
       top: 0;
@@ -52,17 +61,15 @@
     }
 
     .front {
-      background: #ffcb05;
     }
-    
+
     .back {
-      background: green;
       transform: rotateY(180deg);
     }
-  }
 
-  .flip-button.flipped {
-    transform: rotateY(180deg);
+    &.flipped {
+      transform: rotateY(180deg);
+    }
   }
 
 }

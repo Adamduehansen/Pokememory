@@ -7,6 +7,10 @@ type Props = {
   onCardSelected: (id: string) => void;
 };
 
+function isFlippedNotMatchedCard(card: types.Card): boolean {
+  return card.isFlipped && !card.isMatched;
+}
+
 function createPokemonUrl(
   pokemonNumber: number,
   facing: types.SpriteFacing,
@@ -25,6 +29,9 @@ export function CardGrid(
     };
   }
 
+  const hasTwoNonMatchedCardsFlipped =
+    cards.filter(isFlippedNotMatchedCard).length === 2;
+
   return (
     <div class="card-grid">
       {cards.map((card, index): JSX.Element => {
@@ -36,6 +43,9 @@ export function CardGrid(
               onClick={makeOnCardSelected(card.id)}
               disabled={card.isMatched || card.isFlipped}
               aria-label={`Card ${index.toString()}`}
+              isMatched={card.isMatched}
+              isInvalid={card.isFlipped && !card.isMatched &&
+                hasTwoNonMatchedCardsFlipped}
             />
           </div>
         );
