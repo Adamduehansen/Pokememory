@@ -42,7 +42,7 @@ export function Dialog(props: Props) {
       }
       onClose();
     });
-  }, [onClose]);
+  }, []);
 
   useEffect(() => {
     if (open) {
